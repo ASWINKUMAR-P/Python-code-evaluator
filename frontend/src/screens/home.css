@@ -1,0 +1,70 @@
+.home-body{
+    /* background: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOGOJ9YZauHIslrVpckhDyq8Frh2hxeMhiRA&usqp=CAU"); */
+    background-repeat: no-repeat;
+    background-size: cover;
+    height:100vh;
+    }
+    .home-content{
+        background-color: rgb(248, 248, 248);
+        display: flex;
+        flex-direction: column;
+        width:40vw;
+        margin:auto;
+        box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3);
+      }
+      .theme-dark .home-content{
+        background-color: #3c3e50;
+      }
+      .heading{
+        padding-top:20px;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.6);
+      }
+      .theme-dark .heading{
+        color:white;
+      }
+      .home-box{
+        border:1px solid #a4a4a9;
+        width:fit-content;
+        margin-left:75px;
+        border-radius:8px;
+        /* padding-left:30px; */
+        border-left: 7px solid rgb(220, 79, 107);
+      }
+      .home-content h3{
+        margin-left:10px;
+        margin-right: 10px;
+        font-size: 20px;
+        font-weight: 550;
+      }
+      .home-instruction{
+        padding:10px 30px 0px 30px;
+      }
+      .home-instruction h4{
+        margin:5px;
+        font-size: 22px;
+        font-weight: 550;
+        color: rgba(0, 0, 0, 0.6);
+      }
+      .theme-dark .home-instruction h4{
+        color:white;
+      }
+      .home-instruction ul li{
+        font-size:1.2em;
+      }
+      .btn-danger{
+        width:25%;
+        cursor:pointer;
+        font-size: 17px;
+        margin: auto;
+        margin-bottom: 40px;;
+      }
+      .logout{
+        border:none;
+        outline:none;
+        margin-bottom:9px;
+      }
+      .logout:hover{
+        border:none;
+        outline:none;
+      }

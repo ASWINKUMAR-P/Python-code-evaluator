@@ -1,0 +1,301 @@
+/* 
+  .admin-label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .col,.col-1,.col-10{
+    padding:0px;
+  }
+  .nav-admin{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: block;
+    height:62px;
+    background-color: rgb(243, 66, 101);
+  }
+  .admin-header{
+    font-weight: 600;
+    font-size: 1.7rem;
+    margin-top:10px;
+    margin-left:60px;
+    color:rgba(75, 59, 59, 0.789);
+  }
+  .email-box{
+    margin-right:10px;
+  }
+  #submit {
+    padding: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .admin {
+    width: 400px;
+    margin: 0 auto;
+  }
+  .form-group {
+    padding: 10px 0px 10px 0px;
+    margin-bottom: 10px;
+  }
+  .admin-input {
+    width: 70%;
+    padding: 10px;
+  }
+  .admin-search{
+    padding:10px 10px 10px 0px;
+    outline:none;
+    border:none;
+    border-bottom:1px solid #000;
+    margin-bottom: 17px;
+  }
+  .admin-btn {
+    background: none;
+    background-color: rgb(239, 39, 79);
+    color: rgba(0, 0, 0, 0.737);
+    padding: 10px 20px;
+    font-weight:700;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+  }
+  .input-group.md-form.form-sm.form-1 input {
+    border: 1px solid #a12929;
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+  }
+
+  .reg-box{
+    width:70px;
+    margin-left:10px;
+  }
+  .reg-box input{
+    margin-right:5px;
+  }
+  .filter-checkbox{
+    margin-bottom: 10px;
+  }
+ .filters{
+  margin-right:10px;
+  display: flex;
+  flex-direction: column;
+  width:20vw;
+ }
+ .filter-content{
+  display:flex;
+  flex-direction: row;
+  width: fit-content;
+  margin-left:150px;
+ }
+.clg-image{
+  display: flex;
+  flex-direction: row;
+}
+.clg-image img{
+  width:2vw;
+  height:3vh;
+  margin-left:10px;
+}
+.filter1{
+  margin-top:100px;
+  margin-left:90px;
+  position: fixed;
+}
+.filter2{
+  position: relative;
+  margin-top:50px;
+  left:135%;
+}
+ .neomorph-container {
+  margin: auto;
+  padding: 10px;
+  box-shadow: 5px 5px 10px 0px #ddd;
+  background: #fff;
+  width: 500px;
+ 
+  margin-left:30px;
+  border-radius: 5px;
+  font-family: sans-serif;
+}
+
+.neomorph-title {
+  font-size: 19px;
+
+  color: #333;
+  margin-top: 20px;
+}
+
+.neomorph-inputs {
+  padding: 10px 0px;
+  margin-bottom: 10px;
+}
+
+.neomorph-input {
+  border: 1px solid #ddd;
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 5px;
+  box-shadow: 0px 2px 3px 0px #ddd;
+  font-size: 18px;
+}
+
+.neomorph-filter {
+  padding: 10px 0px;
+  width: 18vw;
+  text-align: left;
+  margin-left:1px;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+}
+.neomorph-filter  input{
+  margin-bottom:10px;
+  font-size: 17px;
+}
+.neomorph-filter-button {
+  background-color: #ddd;
+  color: #333;
+  border: none;
+  padding: 10px;
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0px 2px 3px 0px #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.filter-checkbox{
+  background: white;
+  width:10vw;
+  border:1px solid #ddd;
+  box-shadow: 0px 2px 3px 0px #ddd;
+ } */
+ .filter-page{
+  width:100vw;
+}
+.side{
+  display:flex;
+  flex-direction: row;
+  width:fit-content;
+  height:92.5vh;
+  background: rgb(222, 60, 93);
+}
+.wrap{
+  display:flex;
+  flex-direction: column;
+}
+.section-div{
+  display:flex;
+  background-color: rgb(222, 60, 93);
+  justify-content: space-between;
+}
+.section-div h3{
+  margin-left:200px;
+  padding:7px;
+}
+.profile-div p{
+  margin:10px;
+}
+.neomorph-container{
+  padding:10px;
+  box-shadow: 5px 5px 10px 0px #ddd;
+  background: #fff;
+  /* width: 450px; */
+  border-radius: 5px;
+  font-family: sans-serif;
+}
+.filter-content{
+  display:grid;
+  grid-template-columns: 400px 400px;
+  width:fit-content;
+  margin:auto;
+  margin-top:80px;
+}
+/* .filter1 .neomorph-container{
+  width:100%;
+  margin-right:90px;
+} */
+.filter1{
+  margin-right:43px;
+}
+.filter1 button{
+  margin:30px 0px 0px 0px;
+}
+.filter2 .neomorph-container{
+  /* margin-left:20px; */
+  /* width:100%; */
+}
+.clg-image{
+  display: flex;
+  flex-direction: row;
+}
+.clg-image img{
+  width:2vw;
+  height:3vh;
+  margin-left:10px;
+}
+.neomorph-title {
+  font-size: 19px;
+
+  color: #333;
+  margin-top: 20px;
+}
+
+.neomorph-inputs {
+  padding: 10px 0px;
+  margin-bottom: 10px;
+}
+
+.neomorph-input {
+  border: 1px solid #ddd;
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 5px;
+  box-shadow: 0px 2px 3px 0px #ddd;
+  font-size: 18px;
+}
+
+.neomorph-filter {
+  padding: 10px 0px;
+  width: 18vw;
+  text-align: left;
+  margin-left:1px;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+}
+.neomorph-filter  input{
+  margin-bottom:10px;
+  font-size: 17px;
+}
+.neomorph-filter-button {
+  background-color: #ddd;
+  color: #333;
+  border: none;
+  padding: 10px;
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0px 2px 3px 0px #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.filter-checkbox{
+  background: white;
+  width:10vw;
+  border:1px solid #ddd;
+  box-shadow: 0px 2px 3px 0px #ddd;
+ } 
+ .reg-box{
+  width:70px;
+  margin-left:10px;
+}
+.reg-box input{
+  margin-right:5px;
+}
+.filter-checkbox{
+  margin-bottom: 10px;
+}

@@ -1,0 +1,13 @@
+.compiler-quest{
+    color:rgb(133, 121, 121);
+    font-size:1.3em;
+  }
+  #myLinks{
+    background-color:rgb(238, 232, 232) ;
+  }
+  #myLinks a:hover{
+    color:white;
+    background-color:rgb(210, 203, 203);
+  }
+  
+  

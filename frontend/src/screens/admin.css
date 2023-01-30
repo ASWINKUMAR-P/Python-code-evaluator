@@ -1,0 +1,159 @@
+
+  .leaderboard-body {
+    padding: 0;
+    margin: 0;
+    background: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEhUTEhIVFRUXGBoYGBcVFxUXFxUaFxsYGBcYFxUYHSggGBolGxoYIjEhJSkrLi4uGB8zODMtNygtLisBCgoKDQ0NDg0NDisZFRkrKy0rLSs3KysrKy0tKystKysrKys3KysrNysrKystKysrKysrKy0rKysrKysrKysrK//AABEIALcBEwMBIgACEQEDEQH/xAAZAAEBAQEBAQAAAAAAAAAAAAAAAQIDBwT/xAAmEAEBAAEBBwUBAQEAAAAAAAAAAfARAiExQVHB0WFxgaGxkfHh/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A9emZ8JOq3PwnBpDlmdTPCbSoFNnfr0zU9c4aeFgJeJOZDZAz8CJeQLEW8M+EFWpbnqvNNMz4EOVzNyxL+rBUpqU/AOppmeogNd/rVMqarwAEnPOBynUFn4UmdkudgXPpLSgLcz2SBJn4BVzwzVBVqKBRQGV5GmfRtCE5CpAPQnddnhmcU/79il4Q5Lc7nLeCGhCASpSzctA6UpmfacwJ1zkZ/F2k9s0ABL3BUWoBCBAFEBIt5kAIROSgZ/BD/AJFnP1TZ5EBpUigtRQE557E3XOSwgh5LDUFXZ+vKbM4f368kIBc+U287rOpn6BeKaclvD3v4XoCXh9+DPlUgAjXUGV1AEk3+x3JzLxBCEKCRrmdGdQVKqAt4BYZnyCSEWJABdM9igmeFgSZ2BYoQCzNwu71QGokWgiSE8ZnU7lFJme56Lnwk4gundItqAaluZ6HMBLyLdy3fc9znQNOqLN5aB0zgyuhQJ3ZjXbsgFnFDz4AWcUgAUXmgBc7k4JQWfoACdRQFRYCrqy3ANBNLmgAXM9iAi0KUC52TP6SfufZp1FLSm0UDaWJTM+AITyQ/wAAnH9IJAPXOhtds+ljPLM4At3RNC52PXPQAgdQSAoESxdACpyVmgtM7H+lBKq6IBF2STO4A2y1AXT1E1ioJwSeq7Rcz2UCGngmdgTZ5+3Y2qt7yJMz3BbN+eyefxYkApmfG4JuA5X1n+Gme4AJOWZ/0NoDhC7tVzPXRL3z6BNOK68Dymygi6E5lUOue5adfX/DZgFJxLTPvcBnhJM/Fm9Nc9wIVUkBeaQpQGklUCNRGgXQAGYbPANRCGePtLn0tFRducc4pqtATRUvDPYDPJS987F/AMz4CdSAlXmZn8IBJ2Slu7PldrigyTOxtLAM/UhMz3TNP3PUFXUzP1KoRaQgIlW39NAKRJQAAFi6pFBWs/iRqAuoUQYIZ8J0VCbyGpRT1zeXkQzPkAqyb8zomeQIbJn8JzAnMOme5n0CKkANOpe6oCWrszz4QgBoScszWFBUNSfQKmeCcwCoAEKUAIQgLVTwuyDUa2WY1M+AagsqA5cy01SiKhmfAC8s3kvNKvcULxLQDXPhKUA2sq3imx/mf0n6AueU5/2Z9AESAATmQnPPUDjrnQzsE5X5AhnkNQIkzPZCgRZnyRAA1ICkSEBpUmfKwGtlpmNSg2IA5JaVKIudwtKBM9CZ+JOmeoChM7/SUVdSnNJnYFNUOYLO/lJVqUCpCmoFzstzsmyUC1Zme6Zn2bVBU1NogIJFA1SkSgsCgKJM7LyBejUZ2WpQajUZ2WoDVgqA4JtFpbvEWm1c/EJxz3/QX/RJmfB0BqIaprmfAKJmfRRRYl6Z/i0RC0SUFiGZ8GgKmqLM/v8Aoq+hqmZ9F4Z7AUqW/gBM7ERYCLqlKB/wpnY6ApM+UtaBZVjMa1BuNbLGreyDQAPmufCdlBE2l1332BRNdy0ALxz0Nq7/AJAF56dMiS59qAmvD6/TaoICSgBnct3AoGoIGpOCgM6lvMASHIAKagBqQFCZ8LqCK1OK7AKjUbgINwAH/9k=");
+    font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    height:100vh;
+  }
+  .board-container {
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+  .myblock{
+    margin:60px auto auto auto;
+    display:block;
+  }
+  .nav-board ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: block;
+    height:65px;
+    background-color: rgb(243, 66, 101);
+  }
+  
+  .nav-board li {
+    float: right;
+    margin-right: 50px;
+    margin-top: 20px;
+  }
+  
+  .nav-board li a {
+    font-size: 24px;
+    font-weight: 500;
+    padding: 8px;
+    text-decoration: none;
+    color: rgba(13, 3, 36, 0.586);
+  }
+  .myblock table {
+    display: grid;
+    border-collapse: collapse;
+    min-width: 100%;
+    grid-template-columns: 
+      minmax(10px, 69px)
+      minmax(10px, 200px)
+      minmax(10px, 120px);
+      border:1px solid #000;
+  }
+  
+  .myblock thead,
+  .myblock tbody,
+  .myblock tr {
+    display: contents;
+  }
+  
+  .myblock th,
+  .myblock td {
+    padding: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .myblock td div{
+    display:flex;
+    height:35px;
+  }
+  .myblock td div p{
+    margin-top:auto;
+    margin-bottom:auto;
+    padding-left:8px;
+  }
+  .myblock th {
+    position: sticky;
+    top: 0;
+    background: rgb(237, 90, 120);
+    text-align: left;
+    font-weight: normal;
+    font-size: 1.1rem;
+    color: white;
+  }
+  
+  .myblock th:last-child {
+    border: 0;
+  }
+  
+  .myblock td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: #808080;
+  }
+  
+  .myblock tr:nth-child(even) td {
+    background: #f8f6ff;
+  }
+.excel-format{
+  width:40vw;
+  height:40vh;
+  padding:20px;
+  margin:30px;
+  /* box-shadow: 
+    12px 12px 16px 0 rgba(255, 255, 255, 0.3) inset,
+    -8px -8px 12px 0 rgba(0, 0, 0, .25) inset; */
+    background: linear-gradient(135deg, rgba(0,0,0,0.22), rgba(255,255,255,0.25));
+    box-shadow: 12px 12px 16px 0 rgba(0, 0, 0, 0.25),
+   -8px -8px 12px 0 rgba(255, 255, 255, 0.3);
+  /* background: #e1e0e0; */
+}
+.excel-format ul li{
+  font-size: 18px;
+}
+.excel-icon{
+  display:flex;
+  flex-direction: row;
+}
+.excelfile{
+  margin-left:10px;
+}
+.file-div img{
+  width:35vw;
+  height:45vh;
+  margin-left:20px;
+  padding-top:15px;
+}
+.file-div{
+  display: flex;
+  flex-direction: row;
+  margin-left:220px;
+}
+.excelfile h3{
+  padding-top:10px;
+}
+.excel-icon img{
+  margin-top:10px;
+  width:70px;
+  height:70px;
+}
+.excel-format-div img{
+  width:45vw;
+  height:25vh;
+  margin-left:280px;
+}
+.admin {
+  width: 400px;
+  margin: 0 auto;
+}
+.details-btn{
+  margin-top:10px;
+  background: rgb(240, 59, 95);
+  outline:none;
+  border:none;
+  color:#f8f6ff;
+  padding:5px;
+  font-size: 1.09em;
+  border-radius: 4px;
+}
