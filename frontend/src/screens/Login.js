@@ -40,10 +40,15 @@ export default function Login()
             navigate(`/home/${firstname}/result`);
           }
         }
-        else{
+        else if(data[0].role==="admin"){
           localStorage.setItem('Token',data[0].token);
           navigate(`/admin`);
         }
+        else{
+          window.alert("Invalid Credentials");
+          navigate('/');
+        }
+        
       }
       catch(err){
         window.alert("Invalid Credentials");

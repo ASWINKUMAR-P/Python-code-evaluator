@@ -11,6 +11,7 @@ import './filter.css';
 import "./sidebar.css";
 import { Link } from "react-router-dom";
 import axios from 'axios';
+import Axios from 'axios';
 
 export default function Filter() {
   //   const[count,setCount]= useState(0);
@@ -38,8 +39,29 @@ export default function Filter() {
     fetchData();
   }, []);
 
-  // console.log(students);
-
+  const submitHandler=async(e)=>{
+    e.preventDefault();
+    try
+    {
+      const result=await Axios.post(`/createTest/`,{
+        testName,
+        startTime,
+        endTime,
+        duration,
+        selectedstudents,
+        selectedquestions,
+      })
+      //setStatus(result.data);
+      console.log(result.data);
+      window.alert("Test created successfully");
+    }
+    catch(err)
+    {
+        console.log(err);
+        window.alert("Process failed!!!");
+    }
+    
+  }
   const [constraints, setConstraints] = useState({});
 
   const [levels, setLevels] = useState({ level: "" });
@@ -76,8 +98,6 @@ export default function Filter() {
       setSelectedstudents([...selectedstudents, item]);
     }
   };
-  // console.log(filteredStudents);
-  // console.log(filteredQuestions);
   console.log(selectedquestions);
   console.log(selectedstudents);
 
@@ -96,13 +116,18 @@ export default function Filter() {
           </div>
           <ul>
             <li>
-              <Link to='/Admin' >
+              <Link to='/admin' >
                 <span class="item">Upload Student details</span>
               </Link>
             </li>
             <li>
-              <Link to="/Filter" class="active">
+              <Link to="/test" class="active">
                 <span class="item">Assign test</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/report" class="active">
+                <span class="item">See report</span>
               </Link>
             </li>
           </ul>
@@ -126,7 +151,7 @@ export default function Filter() {
         <label className="neomorph-title">Duration:</label>
         <input type="time" className="neomorph-input" name="duration" placeholder="Duration (in minutes)" required onChange={(e) => setDuration(e.target.value)} />
       </div>
-      <button className="btn btn-danger"type="submit">Submit</button>
+      <button className="btn btn-danger"type="submit" onClick={submitHandler}>Submit</button>
       </div>
       <div className="filter2">
       <div className="neomorph-container">
@@ -161,7 +186,7 @@ export default function Filter() {
                 checked={selectedstudents.includes(student)}
                 onChange={() => handleChangeStudents(student)}
               />
-              {student.registernumber}
+              {student.regNumb}
             </label>
             
           );
@@ -173,28 +198,17 @@ export default function Filter() {
         <input value={setQuestions.level} onChange={(e) => setLevels({ ...levels, level: e.target.value })} />
       </div>
       <ul>
-        {/* {filteredQuestions.map(question=> (
-        <li >{question.questdesc}</li>
-      ))} */}
 
         {filteredQuestions.map((q) => {
-          {/* console.log(q); */ }
           return (
 
-            <label key={q.id}>
+            <label key={q.qnum}>
               <input
                 className="email-box" type="checkbox"
                 checked={selectedquestions.includes(q)}
                 onChange={() => handleChangeQuestions(q)}
-              // checked={
-
-              //  selectedquestions.includes(q) ? 
-              //  setSelectedquestions(selectedquestions.filter(i =>i !=q))
-              //  : setSelectedquestions([...selectedquestions,q])
-
-              // }
               />
-              {q.desc}
+              {q.questdesc}
             </label>
 
           );

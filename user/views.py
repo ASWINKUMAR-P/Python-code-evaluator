@@ -73,6 +73,7 @@ def starttest(request):
     student_test = Student_Test.objects.get(sname=student, tname=test)
     if student_test.starttime is None:
         student_test.starttime = starttime
+        #deadline = (starttime) + test.duration       
         student_test.save()
     return Response({
         "status": "success"
@@ -341,10 +342,11 @@ def result(request):
         d["id"] = id
         try:
             score = Student_Question.objects.get(sname=student, qname=i)
-            d["score"] = score.student_score
+            d["score"] = str(score.student_score)+("/10")
+            d["tscore"] = str((f1score(score.precision, score.recall)*100))+("/100")
         except:
             d["score"] = 0
-        d["tscore"] = f1score(score.precision, score.recall)
+            d["tscore"] = 0
         l.append(d)
     return Response(l)
 

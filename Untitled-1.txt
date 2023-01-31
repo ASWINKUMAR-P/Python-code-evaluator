@@ -1,0 +1,5 @@
+-- database: d:\Py-Evaluator-master\Py-Evaluator-master\db.sqlite3
+
+-- Shift+Enter or Ctrl+Shift+Q (query): Executes a statement on the cursor.
+-- Ctrl+Shift+E (executescript): Executes the entire file without displaying the results.
+DROP TABLE "user_student_test";

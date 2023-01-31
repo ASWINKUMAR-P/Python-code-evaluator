@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import XLSX from 'xlsx';
 export default function Admin() {
 
+
   const params = useParams();
 
   const navigate = useNavigate();
@@ -25,70 +26,73 @@ export default function Admin() {
   // const[endTime,setendTime]=useState('');
   // const[duration,setDuration]=useState('');
 
-  const [jsonData, setjsonData] = useState('');
-  const submitHandler = async (e) => {
+  const [StudentjsonData, setStudentjsonData] = useState('');
+  const [QuestionjsonData, setQuestionjsonData] = useState('');
+  const studentSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      const result = await Axios.post(`/sendstudent/`, {
-        jsonData
+      const result = await Axios.post(`/createStudent/`, {
+        StudentjsonData,
       })
-      setStatus(result.data);
-      console.log(jsonData);
+      console.log(StudentjsonData);
+      window.alert("Data updated successfully!!!");
     }
     catch (err) {
+      
+      window.alert("Enter valid file with valid data");
       console.log(err);
     }
-
+  }
+  const questionSubmitHandler = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await Axios.post(`/createQuestion/`, {
+        QuestionjsonData,
+      })
+      //setStatus(result.data);
+      console.log(QuestionjsonData);
+      window.alert("Data updated successfully!!!");
+    }
+    catch (err) {
+      window.alert("Enter valid file with valid data");
+      console.log(err);
+    }
   }
 
-
-  const [items, setEmail] = useState([])
-  // const [selectedItems, setSelectedItems] = useState([]);
-  useEffect(() => {
-
-    const fetchData = async () => {
-      const result = await axios.get('/sendstudent/');
-      setEmail(result.data);
-
-
-
-    };
-    fetchData();
-  }, []);
-  // console.log(items);
-
-  // const [selectedItems, setSelectedItems] = useState([]);
-
-  // const handleChange = (item) => {
-  //   if (selectedItems.includes(item)) {
-  //     setSelectedItems(selectedItems.filter(i => i !== item));
-  //   } else {
-  //     setSelectedItems([...selectedItems, item]);
-  //   }
-  // };
-
-  //console.log(selectedItems);
-
-  const [fileName, setfileName] = useState(null);
-  const handleFile = async (e) => {
+  const [StudentfileName, setStudentfileName] = useState(null);
+  const [QuestionfileName,setQuestionfileName]=useState(null);
+  const handleStudentFile = async (e) => {
 
     console.log(e.target.files[0]);
     const file = e.target.files[0];
-    setfileName(file.name)
+    setStudentfileName(file.name)
     const data = await file.arrayBuffer();
     const workbook = XLSX.read(data);
 
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
     const jsonData = XLSX.utils.sheet_to_json(worksheet);
     console.log(jsonData);
-    setjsonData(jsonData);
+    setStudentjsonData(jsonData);
     // console.log(jsonData);
   };
-  console.log(jsonData);
+  console.log(setStudentjsonData);
 
+  const handleQuestionFile = async (e) => {
+
+    console.log(e.target.files[0]);
+    const file = e.target.files[0];
+    setQuestionfileName(file.name)
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data);
+
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+    console.log(jsonData);
+    setQuestionjsonData(jsonData);
+    // console.log(jsonData);
+  };
 
   // console.log(selectedItems);
-
 
   return (
     <div>
@@ -104,52 +108,52 @@ export default function Admin() {
           </div>
           <ul>
             <li>
-              <Link to='/Admin' class="active">
+              <Link to='/admin' class="active">
                 <span class="item">Upload Student details</span>
               </Link>
             </li>
             <li>
-              <Link to="/Filter">
+              <Link to="/test">
                 <span class="item">Assign test</span>
               </Link>
             </li>
-            {/* <li>
-              <Link to="/Filter">
-                <span class="item">Questions Excel</span>
+            <li>
+              <Link to="/report">
+                <span class="item">
+                  See report
+                </span>
               </Link>
-            </li> */}
-            {/* <Admin /> */}
+            </li>
           </ul>
         </div>
       </div>
-      <form onSubmit={submitHandler}>
-        {/* <div className="nav-admin"> */}
-        {/* <p className="admin-header">Admin Dashboard</p> */}
-        {/* </div> */}
-        <div className="admin">
-          {/* <div class="admin-form"> */}
-          <form>
+      <form>
+        <div className="admin"><form>
             <div className="excel-icon">
               <img src={excelicon}></img>
+              <form>
               <div className="excelfile">
                 <h3>Student Details</h3>
-                {fileName && (
-                  <p>fileName:<span>{fileName}</span></p>
+                {StudentfileName && (
+                  <p>fileName:<span>{StudentfileName}</span></p>
                 )}
-                <input type="file" onChange={(e) => handleFile(e)} />
-                <button class="details-btn">Submit</button>
+                <input type="file" onChange={(e) => handleStudentFile(e)} />
+                <button type="submit" onClick={studentSubmitHandler}>Submit</button>
               </div>
+              </form>
+              <form>
               <div className="excelfile">
                 <h3>QuestionsUpload</h3>
-                {fileName && (
-                  <p>fileName:<span>{fileName}</span></p>
+                {QuestionfileName && (
+                  <p>fileName:<span>{QuestionfileName}</span></p>
                 )}
-                <input type="file" onChange={(e) => handleFile(e)} />
-                <button class="details-btn">Submit</button>
+                <input type="file" onChange={(e) => handleQuestionFile(e)} />
+                <button type="submit" onClick={questionSubmitHandler}>Submit</button>
               </div>
+              </form>
             </div>
           </form>
-        </div>
+          </div>
         <div className="file-div">
           <div className="excel-format">
             <h3>Excel File Format Description:</h3>
@@ -165,11 +169,6 @@ export default function Admin() {
               </li>
               <li>
                 4. Email id must be valid.
-              </li>
-              <li>
-              </li>
-              <li>
-                Click <a href="https://docs.google.com/spreadsheets/d/1lVpQkDYpRxAU9aUP90fBqWYgxpQuq-7I/export?format=xlsx" download>here</a> to download the sample excel file.
               </li>
             </ul>
           </div>
@@ -187,11 +186,6 @@ export default function Admin() {
               </li>
               <li>
                 4. Email id must be valid.
-              </li>
-              <li>
-              </li>
-              <li>
-              Click <a href="https://docs.google.com/spreadsheets/d/1sAIYEn73HitygqFSb9fNRzFnV4QFgaM6/export?format=xlsx" download>here</a> to download the sample excel file.
               </li>
             </ul>
           </div>

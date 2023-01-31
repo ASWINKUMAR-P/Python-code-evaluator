@@ -10,6 +10,7 @@ import Axios from 'axios';
 import Leaderboard from './screens/Leaderboard.js';
 import Result from './screens/Result.js';
 import Compiler from './screens/Compiler.js';
+import ViewReport from './screens/viewreport.js';
 
 function App() {
   return (
@@ -21,7 +22,8 @@ function App() {
           <Route path="/home/:name/result" element={<Result/>}/>
           <Route path="/compiler/:id" element={<Compiler/>}/>
           <Route path='/admin' element={<Admin/>}/>
-          <Route path='/filter' element={<Filter/>}/>
+          <Route path='/test' element={<Filter/>}/>
+          <Route path='/report'element={<ViewReport/>}/>
           <Route path='/' element={<Login/>}/>
       </Routes>
     </BrowserRouter>
