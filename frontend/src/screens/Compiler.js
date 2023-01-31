@@ -132,13 +132,14 @@ function Compiler() {
   }, [warningCount]);
   useEffect(() => {
     const fetchData = async () => {
+      window.myTimer();
       const result = await axios.get(`/question/${test}/${id}`);
       const resultquest = await axios.get(`/getquestion/${test}`);
       setCompile(result.data);
       setQuestion(resultquest.data);
     }; 
     fetchData();
-  },[warnings]);
+  },[id]);
   console.log(question);
   return (
     <div class="wrapper">

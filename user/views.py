@@ -24,7 +24,7 @@ def login(request):
     username = data["email"]
     password = data["password"]
     user = authenticate(username=username, password=password)
-    if user is not None:
+    if user is not None and user.is_staff:
         d = {
             "role": "admin",
             "Token": str(Token.objects.get(user=user).key)
@@ -71,11 +71,9 @@ def starttest(request):
     student = Student.objects.get(sname=sname)
     test = Test.objects.get(tname=tname)
     student_test = Student_Test.objects.get(sname=student, tname=test)
-    if student_test.starttime is None:
-        student_test.starttime = starttime
-        deadline = ((starttime) + test.duration)*1000
-
-        student_test.save()
+    time = student_test.starttime.timestamp()
+    deadline = (int(time) + test.duration.total_seconds())*1000
+    student_test.save()
     return Response({
         "status": "success",
         "deadline" : deadline
@@ -554,3 +552,24 @@ def sendQuestion(request):
     for i in questions:
         questionarray.append(QuestionSerializer(i).data)
     return Response(questionarray)
+
+@api_view(["GET"])
+def viewReport(request,pk):
+    test = Test.objects.get(tname=pk)
+    result = Result.objects.filter(tname=test).order_by("score")
+    l=[]
+    x=1
+    for i in result:
+        d={}
+        student_test=Student_Test.objects.get(sname=i.sname,tname=i.tname)
+        student = Student.objects.get(sname=i.sname)
+        d["name"]=i.sname.sname
+        d["score"]=i.score
+        d["regnum"]=student.regnum
+        d["time"]=student_test.endtime-student_test.starttime
+        d["rank"]=x
+        x+=1
+        l.append(d)
+    return Response(l)
+    
+    

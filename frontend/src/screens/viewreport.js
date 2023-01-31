@@ -15,7 +15,7 @@ export default function ViewReport(props) {
   useEffect(() => {
 
     const fetchData = async () => {
-      const result = await axios.get(`/api/users/viewreport/${params.id}`);
+      const result = await axios.get(`/viewreport/${params.id}`);
       setTestReport(result.data);
       console.log(result);
 
