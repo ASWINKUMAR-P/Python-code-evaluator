@@ -135,6 +135,7 @@ function Compiler() {
       window.myTimer();
       const result = await axios.get(`/question/${test}/${id}`);
       const resultquest = await axios.get(`/getquestion/${test}`);
+      const deadline=await axios.get(`/deadline/${test}/${name}`);
       setCompile(result.data);
       setQuestion(resultquest.data);
     }; 
