@@ -73,10 +73,12 @@ def starttest(request):
     student_test = Student_Test.objects.get(sname=student, tname=test)
     if student_test.starttime is None:
         student_test.starttime = starttime
-        #deadline = (starttime) + test.duration       
+        deadline = ((starttime) + test.duration)*1000
+
         student_test.save()
     return Response({
-        "status": "success"
+        "status": "success",
+        "deadline" : deadline
         })
 
 @permission_classes([IsAuthenticated,])
@@ -528,7 +530,7 @@ def createTest(request):
         send_mail(
             'Test credentials',
             'Your credentials for the test ' + tname + '\nEmail=' + i["email"] + '\nPassword=' + password,
-            'onlinepythoncompiler.com',
+            'pythonevaluvator@gmail.com',
             [i["email"]],
             fail_silently=False,
         )

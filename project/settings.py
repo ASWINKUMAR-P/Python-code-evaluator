@@ -164,7 +164,7 @@ CORS_ALLOW_HEADERS = [
 
 EMAIL_HOST  = "smtp.gmail.com"
 EMAIL_PORT  = 587
-EMAIL_HOST_USER = "onlinepythoncompiler@gmail.com"
-EMAIL_HOST_PASSWORD = "gdoxugquhkbujxka"
+EMAIL_HOST_USER = "pythonevaluvator@gmail.com"
+EMAIL_HOST_PASSWORD = "ixlpaahlhsusfese"
 EMAIL_USE_TLS = True
 
