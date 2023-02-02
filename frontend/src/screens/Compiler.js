@@ -45,6 +45,7 @@ function Compiler() {
   const [output, setOutput] = useState([])
   const [question, setQuestion] = useState([]);
   const [name, setName] = useState([]);
+  const [deadline, setDeadline] = useState([]);
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo } = state;
   const test = localStorage.getItem('Test');
@@ -68,7 +69,7 @@ function Compiler() {
       }
     }
     fetchData();
-  },[Compiler]);
+  },[]);
   const signoutHandler = () => {
     ctxDispatch({ type: 'DELETE_USERINFO' });
     localStorage.clear();
@@ -132,15 +133,21 @@ function Compiler() {
   }, [warningCount]);
   useEffect(() => {
     const fetchData = async () => {
-      window.myTimer();
+      compiledata=await axios.get(`/validate/`,{
+        headers:{
+          Authorization:`Token ${token}`
+        }
+      });
+      setName(compiledata.data.name);
       const result = await axios.get(`/question/${test}/${id}`);
       const resultquest = await axios.get(`/getquestion/${test}`);
-      const deadline=await axios.get(`/deadline/${test}/${name}`);
       setCompile(result.data);
       setQuestion(resultquest.data);
+      const deadline = await axios.get(`/deadline/${test}/${name}`);
+      setDeadline(deadline.data);
     }; 
     fetchData();
-  },[id]);
+  },[compile],[warnings]);
   console.log(question);
   return (
     <div class="wrapper">

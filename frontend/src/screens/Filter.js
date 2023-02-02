@@ -186,7 +186,7 @@ export default function Filter() {
                 checked={selectedstudents.includes(student)}
                 onChange={() => handleChangeStudents(student)}
               />
-              {student.regNumb}
+              {student.registernumber}
             </label>
             
           );
@@ -208,7 +208,7 @@ export default function Filter() {
                 checked={selectedquestions.includes(q)}
                 onChange={() => handleChangeQuestions(q)}
               />
-              {q.questdesc}
+              {q.desc}
             </label>
 
           );

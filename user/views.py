@@ -71,12 +71,13 @@ def starttest(request):
     student = Student.objects.get(sname=sname)
     test = Test.objects.get(tname=tname)
     student_test = Student_Test.objects.get(sname=student, tname=test)
-    time = student_test.starttime.timestamp()
-    deadline = (int(time) + test.duration.total_seconds())*1000
+    student_test.starttime = starttime
     student_test.save()
+#    time = student_test.starttime.timestamp()
+#    deadline = (time + test.duration.total_seconds())*1000
     return Response({
-        "status": "success",
-        "deadline" : deadline
+        "status": "success"
+  #      "deadline" : deadline
         })
 
 @permission_classes([IsAuthenticated,])
@@ -86,6 +87,16 @@ def getQuestions(request, pk):
     questions = test.question.all()
     serializer = QuestionSerializer(questions, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def getDeadline(request, pk1,pk2):
+    test = Test.objects.get(tname=pk1)
+    student = Student.objects.get(sname=pk2)
+    student_test = Student_Test.objects.get(tname=test, sname=student)
+    deadline = student_test.starttime.timestamp() + student_test.tname.duration.total_seconds()
+    return Response({
+        "deadline": int(deadline)
+    })
 
 @permission_classes([IsAuthenticated,])
 @api_view(['GET'])
@@ -270,6 +281,7 @@ def submit(request,pk):
         total_precision = i.precision
         total_recall = i.recall
     student_test.endtime = datetime.now(pytz.UTC)
+    student_test.save()
     time = student_test.endtime - student_test.starttime
     result = Result.objects.create(sname=student, tname=test, score=total_score, time=time,
                                    total_precision=total_precision, total_recall=total_recall)
@@ -532,7 +544,6 @@ def createTest(request):
             [i["email"]],
             fail_silently=False,
         )
-        user.set_password(password)
         user.save()
         student = Student.objects.get(user=user)
         test.student.add(student)
@@ -571,5 +582,15 @@ def viewReport(request,pk):
         x+=1
         l.append(d)
     return Response(l)
+
+@api_view(["GET"])
+def getTest(request):
+    tests = Test.objects.all()
+    testarray = []
+    for i in tests:
+        testarray.append({
+            "test":i.tname
+            })
+    return Response(testarray)
     
     

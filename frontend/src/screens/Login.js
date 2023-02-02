@@ -45,7 +45,7 @@ export default function Login()
           navigate(`/admin`);
         }
         else{
-          window.alert("Invalid Credentials");
+          window.alert("Invalid Login");
           navigate('/');
         }
         

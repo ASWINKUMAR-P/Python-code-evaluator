@@ -13,6 +13,7 @@ urlpatterns=[
     path('timer/',setTimer),
     path('question/<str:pk1>/<str:pk2>', getQuestion),
     path('getquestion/<str:pk>/',getQuestions),
+    path('deadline/<str:pk1>/<str:pk2>/',getDeadline),
     path('execute/', execCode),
     path('submit/<str:pk>', submit),
     path('result/', result),
