@@ -45,7 +45,7 @@ def login(request):
                     "role": "student",
                     "status": student_test.completed,
                     "test": test.tname,
-                    "Token": str(Token.objects.get(user=user) .key)
+                    "Token": str(Token.objects.get(user=user).key)
                 }
                 l=[]
                 l.append(d)
@@ -73,11 +73,11 @@ def starttest(request):
     student_test = Student_Test.objects.get(sname=student, tname=test)
     student_test.starttime = starttime
     student_test.save()
-#    time = student_test.starttime.timestamp()
-#    deadline = (time + test.duration.total_seconds())*1000
+    student_test1 = Student_Test.objects.get(sname=student, tname=test)
+    deadline = (student_test1.starttime.timestamp() + test.duration.total_seconds())*1000
     return Response({
-        "status": "success"
-  #      "deadline" : deadline
+        "status": "success",
+        "deadline" : deadline
         })
 
 @permission_classes([IsAuthenticated,])
@@ -523,6 +523,13 @@ def validate(request):
         "name":student.sname
     })
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated,IsAdminUser])
+def validateadmin(request):
+    return Response({
+        "status":"success"
+    })
+
 @api_view(["POST"])
 def createTest(request):
     tname = request.data["testName"]
@@ -592,5 +599,4 @@ def getTest(request):
             "test":i.tname
             })
     return Response(testarray)
-    
-    
+

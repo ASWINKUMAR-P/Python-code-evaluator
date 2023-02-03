@@ -41,7 +41,7 @@ export default function Login()
           }
         }
         else if(data[0].role==="admin"){
-          localStorage.setItem('Token',data[0].token);
+          localStorage.setItem('Token',data[0].Token);
           navigate(`/admin`);
         }
         else{

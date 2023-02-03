@@ -13,21 +13,33 @@ import { Link } from "react-router-dom";
 import XLSX from 'xlsx';
 export default function Admin() {
 
-
   const params = useParams();
-
   const navigate = useNavigate();
-
-
-
   const [status, setStatus] = useState()
-  // const[testName,settestName]=useState('');
-  // const[startTime,setstartTime]=useState('');
-  // const[endTime,setendTime]=useState('');
-  // const[duration,setDuration]=useState('');
-
   const [StudentjsonData, setStudentjsonData] = useState('');
   const [QuestionjsonData, setQuestionjsonData] = useState('');
+  var admindata;
+  const token = localStorage.getItem("Token");
+
+  useEffect(()=>{
+    const fetchData=async()=>{
+      try{
+          admindata=await axios.get(`/validateadmin`,{
+          headers:{
+            Authorization:`Token ${token}`
+          }
+        });
+      }
+      catch(error){
+        //alert("Please login with admin credentials!!!");
+        window.alert(error);
+        localStorage.clear();
+        navigate('/');
+      }
+    }
+    fetchData();
+  },[]);
+
   const studentSubmitHandler = async (e) => {
     e.preventDefault();
     try {
@@ -58,7 +70,6 @@ export default function Admin() {
       console.log(err);
     }
   }
-
   const [StudentfileName, setStudentfileName] = useState(null);
   const [QuestionfileName,setQuestionfileName]=useState(null);
   const handleStudentFile = async (e) => {
@@ -75,8 +86,6 @@ export default function Admin() {
     setStudentjsonData(jsonData);
     // console.log(jsonData);
   };
-  console.log(setStudentjsonData);
-
   const handleQuestionFile = async (e) => {
 
     console.log(e.target.files[0]);
@@ -91,8 +100,6 @@ export default function Admin() {
     setQuestionjsonData(jsonData);
     // console.log(jsonData);
   };
-
-  // console.log(selectedItems);
 
   return (
     <div>

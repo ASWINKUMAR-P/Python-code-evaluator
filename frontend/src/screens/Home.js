@@ -50,6 +50,7 @@ export default  function Home() {
               name,
               test
           })
+          localStorage.setItem('deadline',result.data.deadline);
           navigate(`/home/${name}/quest`);
           console.log(result.data);
       }

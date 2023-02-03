@@ -23,13 +23,19 @@ export default function ViewReport(props) {
     fetchData();
   }, []);
 
+  function logout()
+  {
+    localStorage.clear()
+    navigate("/");
+  }
+
   return (
     <div class="report-container">
       <div class="wrapper">
         <div class="section">
           <div class="top_navbar">
             <h3>Admin Dashboard</h3>
-            <li ><Link to="/" class="admin-logout">Logout</Link></li>
+            <button onClick={logout}>Logout</button>
           </div>
         </div>
         <div class="sidebar">

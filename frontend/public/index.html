@@ -74,7 +74,7 @@ function myFunction() {
 
 function myTimer(deadline){
   //var deadline  = new Date("feb 01, 2023 015:00:00").getTime();
-  
+  var f=0;
 var x = setInterval(function() {
   
 var now = new Date().getTime();
@@ -88,13 +88,16 @@ document.getElementById("hour").innerHTML =hours;
 document.getElementById("minute").innerHTML = minutes; 
 document.getElementById("second").innerHTML =seconds; 
 if (t < 0) {
-        clearInterval(x);
-        document.getElementById("demo").innerHTML = "TIME UP";
+        f=1;
+        //window.alert("Time Up");
+        //document.getElementById("demo").innerHTML = "TIME UP";
         // document.getElementById("day").innerHTML ='0';
         document.getElementById("hour").innerHTML ='0';
         document.getElementById("minute").innerHTML ='0' ; 
         document.getElementById("second").innerHTML = '0'; }
+        
 }, 1000);
+return f;
 }
     const balloonContainer = document.getElementById("balloon-container");
 

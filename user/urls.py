@@ -20,5 +20,6 @@ urlpatterns=[
     path('leaderboard/<str:pk>/', getLeaderBoard),
     path('createStudent/', createStudent),
     path('createQuestion/', createQuestion),
-    path('validate/',validate)
+    path('validate/',validate),
+    path('validateadmin/',validateadmin)
 ]
