@@ -27,6 +27,33 @@ export default function Filter() {
 
   const [selectedquestions, setSelectedquestions] = useState([]);
   const [selectedstudents, setSelectedstudents] = useState([]);
+  var admindata;
+  const token = localStorage.getItem("Token");
+
+  useEffect(()=>{
+    const fetchData=async()=>{
+      try{
+          admindata=await axios.get(`/validateadmin`,{
+          headers:{
+            Authorization:`Token ${token}`
+          }
+        });
+      }
+      catch(error){
+        //alert();
+        window.alert("Please login with admin credentials!!!");
+        localStorage.clear();
+        navigate('/');
+      }
+    }
+    fetchData();
+  },[]);
+
+  function logout()
+  {
+    localStorage.clear()
+    navigate("/");
+  }
 
   useEffect(() => {
 
@@ -108,6 +135,7 @@ export default function Filter() {
         <div class="section">
           <div class="top_navbar">
             <h3>Admin Dashboard</h3>
+            <button onClick={logout}>logout</button>
           </div>
         </div>
         <div class="sidebar">

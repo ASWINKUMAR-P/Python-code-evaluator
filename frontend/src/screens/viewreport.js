@@ -15,7 +15,7 @@ export default function ViewReport(props) {
   useEffect(() => {
 
     const fetchData = async () => {
-      const result = await axios.get(`/viewreport/${params.id}`);
+      const result = await axios.get(`/generatereport/${params.id}`);
       setTestReport(result.data);
       console.log(result);
 
@@ -77,10 +77,9 @@ export default function ViewReport(props) {
               console.log(q);
               return (
                 <ReportComponent
-                  name={q.name}
-                  regnum={q.regnum}
+                  name={q.student}
                   rank={q.rank}
-                  time={q.time}
+                  time={q.timetaken}
                   score={q.score}
 
                 />

@@ -20,6 +20,9 @@ urlpatterns=[
     path('leaderboard/<str:pk>/', getLeaderBoard),
     path('createStudent/', createStudent),
     path('createQuestion/', createQuestion),
+    path('gettest', getTest),
     path('validate/',validate),
-    path('validateadmin/',validateadmin)
+    path('validateadmin/',validateadmin),
+    path('viewreport/<str:pk>/',viewReport),
+    path('generatereport/<str:pk>/',generateReport),
 ]

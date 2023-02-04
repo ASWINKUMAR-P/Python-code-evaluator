@@ -32,13 +32,19 @@ export default function Admin() {
       }
       catch(error){
         //alert("Please login with admin credentials!!!");
-        window.alert(error);
+        window.alert("Please login with admin credentials!!!");
         localStorage.clear();
         navigate('/');
       }
     }
     fetchData();
   },[]);
+
+  function logout()
+  {
+    localStorage.clear()
+    navigate("/");
+  }
 
   const studentSubmitHandler = async (e) => {
     e.preventDefault();
@@ -107,6 +113,7 @@ export default function Admin() {
         <div class="section">
           <div class="top_navbar">
             <h3>Admin Dashboard</h3>
+            <button onClick={logout}>logout</button>
           </div>
         </div>
         <div class="sidebar">

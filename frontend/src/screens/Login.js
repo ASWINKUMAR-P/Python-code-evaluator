@@ -41,6 +41,9 @@ export default function Login()
           }
         }
         else if(data[0].role==="admin"){
+          console.log(data);
+          console.log(data[0]);
+          console.log(data[0].Token);
           localStorage.setItem('Token',data[0].Token);
           navigate(`/admin`);
         }

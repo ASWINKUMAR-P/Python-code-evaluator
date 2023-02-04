@@ -10,6 +10,8 @@ import string, random, sys
 from pytz import timezone
 import pytz
 from datetime import timedelta
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
 
 def precision(TP, FP):
     return TP / (TP + FP)
@@ -583,7 +585,7 @@ def viewReport(request,pk):
         student = Student.objects.get(sname=i.sname)
         d["name"]=i.sname.sname
         d["score"]=i.score
-        d["regnum"]=student.regnum
+        d["regnum"]=student.registernumber
         d["time"]=student_test.endtime-student_test.starttime
         d["rank"]=x
         x+=1
@@ -600,3 +602,37 @@ def getTest(request):
             })
     return Response(testarray)
 
+@api_view(["GET"])
+def generateReport(request,pk):
+    test = Test.objects.get(tname=pk)
+    result = Result.objects.filter(tname=test)
+    student = []
+    testcase = []
+    timetaken = []
+    f1_score = []
+    dataset = {}
+    for i in result:
+        student.append(i.sname.sname)
+        testcase.append(i.score)
+        timetaken.append(i.time.total_seconds())
+        f1_score.append(f1score(i.total_recall,i.total_precision))
+    
+    dataset["student"] = student
+    dataset["testcase"] = testcase
+    dataset["timetaken"] = timetaken
+    dataset["f1_score"] = f1_score
+
+    df = pd.DataFrame(dataset)
+    weights = {'testcase': 0.6, 'timetaken': -0.2, 'f1_score': 0.6}
+    df['score'] = df['testcase'] * weights['testcase'] + df['timetaken'] * weights['timetaken'] + df['f1_score'] * weights['f1_score']
+    x = df[['testcase', 'timetaken', 'f1_score']]
+    y = df['score']
+    clf = RandomForestRegressor()
+    clf.fit(x,y)
+    predicted_scores = clf.predict(x)
+    df['predicted_score'] = predicted_scores
+    df = df.sort_values(by='predicted_score', ascending=False)
+    df['rank'] = df['predicted_score'].rank(ascending=False)
+
+    json_objects = df.to_dict(orient='records')
+    return Response(json_objects)

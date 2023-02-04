@@ -11,6 +11,7 @@ import Leaderboard from './screens/Leaderboard.js';
 import Result from './screens/Result.js';
 import Compiler from './screens/Compiler.js';
 import ViewReport from './screens/viewreport.js';
+import Report from './screens/report.js';
 
 function App() {
   return (
@@ -23,7 +24,8 @@ function App() {
           <Route path="/compiler/:id" element={<Compiler/>}/>
           <Route path='/admin' element={<Admin/>}/>
           <Route path='/test' element={<Filter/>}/>
-          <Route path='/report'element={<ViewReport/>}/>
+          <Route path='/report' element={<Report/>}/>
+          <Route path='/report/:id'element={<ViewReport/>}/>
           <Route path='/' element={<Login/>}/>
       </Routes>
     </BrowserRouter>
