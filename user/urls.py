@@ -13,7 +13,7 @@ urlpatterns=[
     path('timer/',setTimer),
     path('question/<str:pk1>/<str:pk2>', getQuestion),
     path('getquestion/<str:pk>/',getQuestions),
-    path('deadline/<str:pk1>/<str:pk2>/',getDeadline),
+    path('deadline/<str:pk>/',getDeadline),
     path('execute/', execCode),
     path('submit/<str:pk>', submit),
     path('result/', result),
@@ -23,6 +23,5 @@ urlpatterns=[
     path('gettest', getTest),
     path('validate/',validate),
     path('validateadmin/',validateadmin),
-    path('viewreport/<str:pk>/',viewReport),
     path('generatereport/<str:pk>/',generateReport),
 ]

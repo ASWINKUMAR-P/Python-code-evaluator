@@ -19,6 +19,27 @@ def recall(TP, FN):
     return TP / (TP + FN)
 def f1score(recall, precision):
     return 2 * (precision * recall) / (precision + recall)
+def sectostring(time):
+    h, r = divmod(time, 3600)
+    m, s = divmod(r, 60)
+    h = int(h)
+    m = int(m)
+    s = int(s)
+    if h < 10:
+        sh = "0" + str(h)
+    else:
+        sh = str(h)
+    if m < 10:
+        sm = "0" + str(m)
+    else:
+        sm = str(m)
+    if s < 10:
+        ss = "0" + str(s)
+    else:
+        ss = str(s)
+    str_time = sh + ":" + sm + ":" + ss
+    return str_time
+
 @permission_classes([AllowAny,])
 @api_view(["POST"])
 def login(request):
@@ -91,13 +112,14 @@ def getQuestions(request, pk):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def getDeadline(request, pk1,pk2):
-    test = Test.objects.get(tname=pk1)
-    student = Student.objects.get(sname=pk2)
+def getDeadline(request, pk):
+    test = Test.objects.get(tname=pk)
+    user = request.user
+    student = Student.objects.get(user=user)
     student_test = Student_Test.objects.get(tname=test, sname=student)
-    deadline = student_test.starttime.timestamp() + student_test.tname.duration.total_seconds()
+    deadline = (student_test.starttime.timestamp() + student_test.tname.duration.total_seconds())*1000
     return Response({
-        "deadline": int(deadline)
+        "deadline": deadline
     })
 
 @permission_classes([IsAuthenticated,])
@@ -277,6 +299,8 @@ def submit(request,pk):
     student_test.completed = True
     student_test.save()
     total_score = 0
+    total_precision = 0
+    total_recall = 0
     score = Student_Question.objects.filter(sname=student, tname=test)
     for i in score:
         total_score += i.student_score
@@ -303,7 +327,30 @@ def result(request):
     student = Student.objects.get(sname=sname)
     student_test = Student_Test.objects.get(sname=student, tname=test)
     questions = test.question.all()
-    result = Result.objects.get(tname=test, sname=student)
+    try:
+        result = Result.objects.get(tname=test, sname=student)
+        time = result.time
+        time = time.total_seconds()
+        h, r = divmod(time, 3600)
+        m, s = divmod(r, 60)
+        h = int(h)
+        m = int(m)
+        s = int(s)
+        if h < 10:
+            sh = "0" + str(h)
+        else:
+            sh = str(h)
+        if m < 10:
+            sm = "0" + str(m)
+        else:
+            sm = str(m)
+        if s < 10:
+            ss = "0" + str(s)
+        else:
+            ss = str(s)
+        resulttime = sh + ":" + sm + ":" + ss
+    except:
+        resulttime = 0
     totaltime = test.duration.total_seconds()
     h,r = divmod(totaltime,3600)
     m,s = divmod(r,60)
@@ -323,31 +370,10 @@ def result(request):
     else:
         ss = str(s)
     resulttotaltime = sh + ":" + sm + ":" + ss
-    l = []
-    d = {}
-    time = result.time
-    time = time.total_seconds()
-    h, r = divmod(time, 3600)
-    m, s = divmod(r, 60)
-    h = int(h)
-    m = int(m)
-    s = int(s)
-    if h < 10:
-        sh = "0" + str(h)
-    else:
-        sh = str(h)
-    if m < 10:
-        sm = "0" + str(m)
-    else:
-        sm = str(m)
-    if s < 10:
-        ss = "0" + str(s)
-    else:
-        ss = str(s)
-    resulttime = sh + ":" + sm + ":" + ss
+    l=[]
+    d={}
     d["time"] = resulttime
     d["ttime"] = resulttotaltime
-    # d["time"]=result.time
     l.append(d)
     for i in questions:
         # print(i)
@@ -355,12 +381,16 @@ def result(request):
         id = i.id
         d["id"] = id
         try:
-            score = Student_Question.objects.get(sname=student, qname=i)
+            score = Student_Question.objects.get(sname=student, qname=i, tname=test)
             d["score"] = str(score.student_score)+("/10")
-            d["tscore"] = str((f1score(score.precision, score.recall)*100))+("/100")
-        except:
-            d["score"] = 0
-            d["tscore"] = 0
+            f1 = f1score(score.precision, score.recall)
+            totalscore = ((score.student_score)/10 + f1)*0.5
+            d["tscore"] = str(round((totalscore*100),2))+("/100")
+
+        except(Exception):
+            print(Exception)
+            d["score"] = "0/10"
+            d["tscore"] = "0/100"
         l.append(d)
     return Response(l)
 
@@ -397,6 +427,8 @@ def createStudent(request):
             user.save()
             student = Student(sname=sname, year=year, college=college,department=department, user=User.objects.get(email=email),registernumber=registernumber)
             student.save()
+            token = Token.objects.create(user=user)
+            token.save()
         except Exception as e:
             return Response({"status": str(e)})
     return Response({"status": "success"})
@@ -574,25 +606,6 @@ def sendQuestion(request):
     return Response(questionarray)
 
 @api_view(["GET"])
-def viewReport(request,pk):
-    test = Test.objects.get(tname=pk)
-    result = Result.objects.filter(tname=test).order_by("score")
-    l=[]
-    x=1
-    for i in result:
-        d={}
-        student_test=Student_Test.objects.get(sname=i.sname,tname=i.tname)
-        student = Student.objects.get(sname=i.sname)
-        d["name"]=i.sname.sname
-        d["score"]=i.score
-        d["regnum"]=student.registernumber
-        d["time"]=student_test.endtime-student_test.starttime
-        d["rank"]=x
-        x+=1
-        l.append(d)
-    return Response(l)
-
-@api_view(["GET"])
 def getTest(request):
     tests = Test.objects.all()
     testarray = []
@@ -606,6 +619,7 @@ def getTest(request):
 def generateReport(request,pk):
     test = Test.objects.get(tname=pk)
     result = Result.objects.filter(tname=test)
+    total_tc = test.question.count()*10
     student = []
     testcase = []
     timetaken = []
@@ -623,8 +637,10 @@ def generateReport(request,pk):
     dataset["f1_score"] = f1_score
 
     df = pd.DataFrame(dataset)
-    weights = {'testcase': 0.6, 'timetaken': -0.2, 'f1_score': 0.6}
-    df['score'] = df['testcase'] * weights['testcase'] + df['timetaken'] * weights['timetaken'] + df['f1_score'] * weights['f1_score']
+    weights = {'testcase': 0.6, 'timetaken': 0.2, 'f1_score': 0.2}
+    df['score'] = ((df['testcase']/total_tc) * weights['testcase']) + ((1-(df['timetaken']/test.duration.total_seconds())) * weights['timetaken']) + (df['f1_score'] * weights['f1_score'])
+    df['score'] = df['score'].apply(lambda x: x*100)
+    df['score'] = round(df['score'],3)
     x = df[['testcase', 'timetaken', 'f1_score']]
     y = df['score']
     clf = RandomForestRegressor()
@@ -633,6 +649,6 @@ def generateReport(request,pk):
     df['predicted_score'] = predicted_scores
     df = df.sort_values(by='predicted_score', ascending=False)
     df['rank'] = df['predicted_score'].rank(ascending=False)
-
+    df['timetaken'] = df['timetaken'].apply(sectostring)
     json_objects = df.to_dict(orient='records')
     return Response(json_objects)
