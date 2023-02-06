@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import { Navigate, renderMatches, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Axios from 'axios';
@@ -27,8 +27,13 @@ function useWarningCount() {
     if (warningCount >= 3) {
       ctxDispatch({ type: 'DELETE_USERINFO' });
       localStorage.setItem('warningCount', 1);
-      localStorage.removeItem('userInfo');
-      navigate('/')
+      const data=axios.get(`/submit/${test}`,{
+        headers:{
+          Authorization:`Token ${localStorage.getItem("Token")}`
+        }
+      });
+      window.alert("You have exceeded the number of attempts.");
+      navigate(`/home/${data.name}/result`);
     }
   },[warningCount]);
   return [warningCount, setWarningCount];
@@ -45,12 +50,55 @@ function Compiler() {
   const [output, setOutput] = useState([])
   const [question, setQuestion] = useState([]);
   const [name, setName] = useState([]);
-  const deadline = localStorage.getItem('deadline');
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo } = state;
   const test = localStorage.getItem('Test');
   const token = localStorage.getItem('Token');
+  const deadline = localStorage.getItem('deadline');
+  const [timerHours, setTimerHours] = useState();
+  const [timerMinutes, setTimerMinutes] = useState();
+  const [timerSeconds, setTimerSeconds] = useState();
+  const [countDownDate, setCountDownDate] = useState();
+  console.log(timerHours);
+  let interval = useRef();
+  let time;
   let compiledata;
+
+  const startTimer = () => {
+    setCountDownDate(deadline);
+    interval.current = setInterval(() => {
+      const now = new Date().getTime();
+      console.log(countDownDate);
+      const distance = countDownDate - now;
+      console.log(now);
+      console.log(distance)
+      //console.log(distance);
+      const hours = Math.floor((distance % (24 * 60 * 60 * 1000)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (60 * 60 * 1000)) / (1000 * 60));
+      const seconds = Math.floor((distance % (60 * 1000)) / 1000);
+      if (distance < 0) {
+        clearInterval(interval.current);
+        const data=axios.get(`/submit/${test}`,{
+          headers:{
+            Authorization:`Token ${token}`
+          }
+        });
+        window.alert("Time Up");
+        navigate(`/home/${data.name}/result`);
+      } else {
+        setTimerHours(hours);
+        setTimerMinutes(minutes);
+        setTimerSeconds(seconds);
+      }
+    }, 1000);
+  };
+
+  useEffect(() => {
+    startTimer();
+    return () => {
+      clearInterval(interval.current);
+    };
+  }, [countDownDate]);
 
   useEffect(()=>{
     const fetchData=async()=>{
@@ -132,17 +180,18 @@ function Compiler() {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [warningCount]);
+
   useEffect(() => {
     const fetchData = async () => {
-      var st= window.myTimer(deadline);
-      console.log(st);
       const result = await axios.get(`/question/${test}/${id}`);
       const resultquest = await axios.get(`/getquestion/${test}`);
       setCompile(result.data);
       setQuestion(resultquest.data);
     }; 
     fetchData();
-  },[compile],[warnings]);
+    //startTimer();
+  },[id],[warnings]);
+
   console.log(question);
   return (
     <div class="wrapper">
@@ -195,15 +244,15 @@ function Compiler() {
             <i class='fas fa-exclamation-triangle'><p className="warning-count">Warning count: {warningCount}</p></i>
               <div id="clockdiv">
                 <div className="inner-clock">
-                  <span className="hours" id="hour"></span>
+                  <span className="hours" id="hour">{timerHours}</span>
                   <h3 className="timer-para">:</h3>
                 </div>
                 <div className="inner-clock">
-                  <span className="minutes" id="minute"></span>
+                  <span className="minutes" id="minute">{timerMinutes}</span>
                   <h3 className="timer-para">:</h3>
                 </div>
                 <div className="inner-clock">
-                  <span className="seconds" id="second"></span>
+                  <span className="seconds" id="second">{timerSeconds}</span>
                 </div>
               </div>
               <div className="end-test">
