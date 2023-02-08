@@ -18,7 +18,10 @@ def precision(TP, FP):
 def recall(TP, FN):
     return TP / (TP + FN)
 def f1score(recall, precision):
-    return 2 * (precision * recall) / (precision + recall)
+    try:
+        return 2 * (precision * recall) / (precision + recall)
+    except:
+        return 0
 def sectostring(time):
     h, r = divmod(time, 3600)
     m, s = divmod(r, 60)
@@ -384,7 +387,7 @@ def result(request):
             score = Student_Question.objects.get(sname=student, qname=i, tname=test)
             d["score"] = str(score.student_score)+("/10")
             f1 = f1score(score.precision, score.recall)
-            totalscore = ((score.student_score)/10 + f1)*0.5
+            totalscore = ((score.student_score)/10 * 0.7) + (f1 * 0.3)
             d["tscore"] = str(round((totalscore*100),2))+("/100")
 
         except(Exception):
@@ -637,7 +640,7 @@ def generateReport(request,pk):
     dataset["f1_score"] = f1_score
 
     df = pd.DataFrame(dataset)
-    weights = {'testcase': 0.6, 'timetaken': 0.2, 'f1_score': 0.2}
+    weights = {'testcase': 0.7, 'timetaken': 0.15, 'f1_score': 0.15}
     df['score'] = ((df['testcase']/total_tc) * weights['testcase']) + ((1-(df['timetaken']/test.duration.total_seconds())) * weights['timetaken']) + (df['f1_score'] * weights['f1_score'])
     df['score'] = df['score'].apply(lambda x: x*100)
     df['score'] = round(df['score'],3)
@@ -645,10 +648,11 @@ def generateReport(request,pk):
     y = df['score']
     clf = RandomForestRegressor()
     clf.fit(x,y)
-    predicted_scores = clf.predict(x)
-    df['predicted_score'] = predicted_scores
-    df = df.sort_values(by='predicted_score', ascending=False)
-    df['rank'] = df['predicted_score'].rank(ascending=False)
+    calculated_scores = clf.predict(x)
+    df['calculated_score'] = calculated_scores
+    df = df.sort_values(by='calculated_score', ascending=False)
+    df['rank'] = df['calculated_score'].rank(ascending=False)
     df['timetaken'] = df['timetaken'].apply(sectostring)
+    df.loc[df['testcase'] == 0, 'score'] = 0
     json_objects = df.to_dict(orient='records')
     return Response(json_objects)
