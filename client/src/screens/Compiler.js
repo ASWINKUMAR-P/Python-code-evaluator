@@ -23,8 +23,10 @@ function useWarningCount() {
   });
 
   useEffect(() => {
+    const test = localStorage.getItem('Test');
     localStorage.setItem('warningCount', warningCount);
     if (warningCount >= 3) {
+      window.alert("You have exceeded the number of attempts.");
       ctxDispatch({ type: 'DELETE_USERINFO' });
       localStorage.setItem('warningCount', 1);
       const data=axios.get(`/submit/${test}`,{
@@ -32,7 +34,6 @@ function useWarningCount() {
           Authorization:`Token ${localStorage.getItem("Token")}`
         }
       });
-      window.alert("You have exceeded the number of attempts.");
       navigate(`/home/${data.name}/result`);
     }
   },[warningCount]);
