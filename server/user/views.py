@@ -653,6 +653,7 @@ def generateReport(request,pk):
     df = df.sort_values(by='calculated_score', ascending=False)
     df['rank'] = df['calculated_score'].rank(ascending=False)
     df['timetaken'] = df['timetaken'].apply(sectostring)
+    df['calculated_score'] = df['calculated_score'].apply(lambda x: round(x,3))
     df.loc[df['testcase'] == 0, 'score'] = 0
     json_objects = df.to_dict(orient='records')
     return Response(json_objects)

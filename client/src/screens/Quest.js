@@ -68,12 +68,6 @@ export default function Quest(props)
                     <h3 class="quest-header">{name}</h3>
                     <button class="logout quest-header"onClick={signoutHandler}>Logout</button>
                 </div>
-                <div className="item sidebar">
-                    <div id="hover"><p class="num">Quests</p></div>
-                    <div id="hover"><p class="num">1</p></div>
-                    <div id="hover"><p class="num">2</p></div>
-                    <div id="hover"><p class="num">3</p></div>
-                </div>
                 <div className="item content-1">
                     <div className="question-content">
                         <h1>Questions</h1>
