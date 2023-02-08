@@ -46,10 +46,16 @@ export default function Result()
     },[test,name]);
     const res=result.slice(1,4);
     const times=result.slice(0,1);
+    function logout()
+    {
+      localStorage.clear()
+      navigate("/");
+    }
   return (
     <div className="nav-board">
     <ul>
-        <li>{test}</li>
+        <li><Link to="/" onClick={logout}class="admin-logout log">Logout</Link></li>
+        <li class="admin-logout">{test}</li>
     </ul>
 <div className="result-block" style={{display:'flex'}}>
 <div class="myblock1">

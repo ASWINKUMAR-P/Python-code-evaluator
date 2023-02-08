@@ -13,7 +13,7 @@ export default function PublicComponent(props)
             <p className="pass">Test case didn't pass</p>
             <div className="input-case">
                 <p><span className="public-case">3/3</span> Public test cases passed</p>
-                <p>Private test cases failed <span className="public-case">{props.totaltestcasePassed}</span></p>
+                <p>Private test cases failed <span className="public-case">{props.score}</span></p>
             </div>
         </div>
         </div>

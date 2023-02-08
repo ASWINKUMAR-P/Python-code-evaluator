@@ -14,7 +14,9 @@ export default function ReportComponent(props)
   return (  
 <tbody>
   <tr>
+    <td>
     <td>{props.rank}</td>
+    </td>
     <td>
       <div>
       <img
@@ -24,7 +26,9 @@ export default function ReportComponent(props)
       <p>{props.name}</p>
       </div>
     </td>
+    <td>
     <td>{props.time}</td>
+    </td>
     <td>
     <td>{props.score}</td>
     

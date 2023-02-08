@@ -38,7 +38,7 @@
     font-weight: 500;
     padding: 8px;
     text-decoration: none;
-    color: rgba(13, 3, 36, 0.586);
+    /* color: rgba(13, 3, 36, 0.586); */
   }
   .myblock table {
     display: grid;

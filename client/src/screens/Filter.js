@@ -135,7 +135,7 @@ export default function Filter() {
         <div class="section">
           <div class="top_navbar">
             <h3>Admin Dashboard</h3>
-            <button onClick={logout}>logout</button>
+            <li><Link to='/'class="admin-logout" onClick={logout} >Logout</Link></li>
           </div>
         </div>
         <div class="sidebar">
@@ -154,8 +154,8 @@ export default function Filter() {
               </Link>
             </li>
             <li>
-              <Link to="/report" class="active">
-                <span class="item">See report</span>
+              <Link to="/report">
+                <span class="item">View Report</span>
               </Link>
             </li>
           </ul>

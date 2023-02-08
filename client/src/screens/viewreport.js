@@ -35,7 +35,7 @@ export default function ViewReport(props) {
         <div class="section">
           <div class="top_navbar">
             <h3>Admin Dashboard</h3>
-            <button onClick={logout}>Logout</button>
+            <li><Link to='/' class="admin-logout"onClick={logout}>Logout</Link></li>
           </div>
         </div>
         <div class="sidebar">

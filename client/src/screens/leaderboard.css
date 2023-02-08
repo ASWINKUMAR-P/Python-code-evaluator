@@ -108,3 +108,42 @@
   .myblock tr:nth-child(even) td {
     background: #f8f6ff;
   }
+  .report-btn{
+    outline:none;
+    border:none;
+    background:transparent;
+    padding-bottom:7px;
+  }
+  .report-btn:hover{
+    border: none;
+    outline:none;
+    color:#fff;
+  }
+  .dropdown {
+    position: relative;
+    display: inline-block;
+    font-size: 20px;
+    outline:none;
+  }
+  .dropdown:hover{
+    outline:none;
+  }
+  
+  .dropdown-content {
+    display: none;
+    /* position: absolute; */
+    /* background-color: #f9f9f9; */
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  .dropdown-div{
+    display:flex;
+    flex-direction: column;
+    padding-top:5px;
+  }

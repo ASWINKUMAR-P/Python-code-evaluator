@@ -31,6 +31,11 @@ export default function Report() {
     };
     fetchData();
   }, []);
+  function logout()
+  {
+    localStorage.clear()
+    navigate("/");
+  }
 
   return (
 
@@ -39,7 +44,7 @@ export default function Report() {
         <div class="section">
           <div class="top_navbar">
             <h3>Admin Dashboard</h3>
-            <li ><Link to="/" class="admin-logout">Logout</Link></li>
+            <li ><Link to='/' onClick={logout} class="admin-logout">Logout</Link></li>
           </div>
         </div>
         <div class="sidebar">
@@ -59,7 +64,7 @@ export default function Report() {
             </li>
             <li>
               <Link to="/report" class="active">
-                <span class="item">Report</span>
+                <span class="item">View Report</span>
               </Link>
             </li>
           </ul>
@@ -68,7 +73,7 @@ export default function Report() {
       <div className="leaderboard">
         <div className="board-container">
           <div class="dropdown">
-            <input placeholder="choose"></input>
+            <input placeholder="Select Test Report"></input>
             <div class="dropdown-content">
               <div class="dropdown-div">
 

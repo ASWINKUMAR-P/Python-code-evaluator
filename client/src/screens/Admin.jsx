@@ -113,7 +113,7 @@ export default function Admin() {
         <div class="section">
           <div class="top_navbar">
             <h3>Admin Dashboard</h3>
-            <button onClick={logout}>logout</button>
+            <li><Link to='/' class="admin-logout" onClick={logout} >Logout</Link></li>
           </div>
         </div>
         <div class="sidebar">
@@ -134,7 +134,7 @@ export default function Admin() {
             <li>
               <Link to="/report">
                 <span class="item">
-                  See report
+                View Report
                 </span>
               </Link>
             </li>
@@ -152,7 +152,7 @@ export default function Admin() {
                   <p>fileName:<span>{StudentfileName}</span></p>
                 )}
                 <input type="file" onChange={(e) => handleStudentFile(e)} />
-                <button type="submit" onClick={studentSubmitHandler}>Submit</button>
+                <button class="details-btn" type="submit" onClick={studentSubmitHandler}>Submit</button>
               </div>
               </form>
               <form>
@@ -162,7 +162,7 @@ export default function Admin() {
                   <p>fileName:<span>{QuestionfileName}</span></p>
                 )}
                 <input type="file" onChange={(e) => handleQuestionFile(e)} />
-                <button type="submit" onClick={questionSubmitHandler}>Submit</button>
+                <button class="details-btn" type="submit" onClick={questionSubmitHandler}>Submit</button>
               </div>
               </form>
             </div>
@@ -179,10 +179,10 @@ export default function Admin() {
                 2. Maximum size of the file is 500KB.
               </li>
               <li>
-                3. Students of registered college can use this platform.
+                3. Use the sample as the reference to create the excel file.
               </li>
               <li>
-                4. Email id must be valid.
+                4. Click <a href="https://docs.google.com/spreadsheets/d/1lVpQkDYpRxAU9aUP90fBqWYgxpQuq-7I/export?format=xlsx">here</a> to download the sample file.
               </li>
             </ul>
           </div>
@@ -190,16 +190,16 @@ export default function Admin() {
             <h3>Excel File Format Description:</h3>
             <ul>
               <li>
-                1. The file should consists of six fields namely name,register number,college,year,department,email.
+                1. The file should consists of question name, description, constraints, 3 public test cases and 7 private test cases along with 3 special test cases.
               </li>
               <li>
                 2. Maximum size of the file is 500KB.
               </li>
               <li>
-                3. Students of registered college can use this platform.
+                3. Use the sample as the reference to create the excel file.
               </li>
               <li>
-                4. Email id must be valid.
+                4. Click <a href="https://docs.google.com/spreadsheets/d/1sAIYEn73HitygqFSb9fNRzFnV4QFgaM6/export?format=xlsx">here</a> to download the sample file.
               </li>
             </ul>
           </div>
