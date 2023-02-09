@@ -75,6 +75,8 @@ class Student_Question(models.Model):
     tname = models.ForeignKey(Test, on_delete=models.CASCADE)
     precision = models.FloatField()
     recall = models.FloatField()
+    code = models.TextField(default=None, null=True, blank=True)
+    isPlagiarised = models.BooleanField(default=False)
 
 class Result(models.Model):
     tname = models.ForeignKey(Test, on_delete=models.CASCADE)
@@ -83,3 +85,4 @@ class Result(models.Model):
     time = models.DurationField()
     total_precision = models.FloatField(default=None)
     total_recall = models.FloatField(default=None)
+    isMalpractice = models.BooleanField(default=False)

@@ -12,16 +12,23 @@ import pytz
 from datetime import timedelta
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
+import re
+import numpy as np
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 def precision(TP, FP):
     return TP / (TP + FP)
+
 def recall(TP, FN):
     return TP / (TP + FN)
+
 def f1score(recall, precision):
     try:
         return 2 * (precision * recall) / (precision + recall)
     except:
         return 0
+
 def sectostring(time):
     h, r = divmod(time, 3600)
     m, s = divmod(r, 60)
@@ -42,6 +49,22 @@ def sectostring(time):
         ss = str(s)
     str_time = sh + ":" + sm + ":" + ss
     return str_time
+
+def checkPlagiarism(code1,code2):
+    code1 = re.sub(r'\s+', ' ', code1)
+    code1 = re.sub(r'#.*', '', code1)
+    code2 = re.sub(r'\s+', ' ', code2)
+    code2 = re.sub(r'#.*', '', code2)
+    vectorizer = CountVectorizer()
+    X = vectorizer.fit_transform([code1, code2])
+    feature_vectors = X.toarray()
+    similarity = cosine_similarity(feature_vectors[0].reshape(1, -1), feature_vectors[1].reshape(1, -1))
+    similarity = similarity[0][0]
+    print(similarity)
+    if similarity > 0.8:
+        return True
+    else:
+        return False
 
 @permission_classes([AllowAny,])
 @api_view(["POST"])
@@ -93,7 +116,7 @@ def starttest(request):
     data = request.data
     sname = data["name"]
     tname = data["test"]
-    starttime = data["time"]
+    starttime = datetime.now(pytz.UTC)
     student = Student.objects.get(sname=sname)
     test = Test.objects.get(tname=tname)
     student_test = Student_Test.objects.get(sname=student, tname=test)
@@ -228,10 +251,11 @@ def execCode(request):
                     score.student_score = points
                     score.precision=0
                     score.recall=recall(tp,fn)
+                    score.code = code
                     score.save()
             except:
                 score = Student_Question.objects.create(sname=student, qname=question, student_score=points,
-                                             tname=test, precision=0, recall=recall(tp, fn))
+                                             tname=test, code=code, precision=0, recall=recall(tp, fn))
                 score.save()
             d = {}
             d["status"] = "public"
@@ -267,10 +291,11 @@ def execCode(request):
             score.student_score = points
             score.precision=precision(tp,fp)
             score.recall=recall(tp,fn)
+            score.code=code
             score.save()
     except:
         score = Student_Question.objects.create(sname=student,qname=question,student_score=points,tname=test,
-                                     precision=precision(tp, fp), recall=recall(tp, fn))
+                                     code=code,precision=precision(tp, fp), recall=recall(tp, fn))
         score.save()
     if points == 10:
         d = {}
@@ -304,8 +329,21 @@ def submit(request,pk):
     total_score = 0
     total_precision = 0
     total_recall = 0
+    isPlagiarism = False
     score = Student_Question.objects.filter(sname=student, tname=test)
     for i in score:
+        code = i.code
+        qname = i.qname
+        other = Student_Question.objects.filter(qname=qname, tname=tname).exclude(sname=student)
+        for j in other:
+            if checkPlagiarism(code, j.code):
+                isPlagiarism = True
+                i.isPlagiarised = True
+                i.student_score = 0
+                i.precision = 0
+                i.recall = 0
+                i.save()
+                break
         total_score += i.student_score
         total_precision = i.precision
         total_recall = i.recall
@@ -313,7 +351,7 @@ def submit(request,pk):
     student_test.save()
     time = student_test.endtime - student_test.starttime
     result = Result.objects.create(sname=student, tname=test, score=total_score, time=time,
-                                   total_precision=total_precision, total_recall=total_recall)
+                                   total_precision=total_precision, total_recall=total_recall,isMalpractice=isPlagiarism)
     result.save()
     student_test.save()
     return Response({
@@ -321,58 +359,25 @@ def submit(request,pk):
         "name":student.sname
         })
 
-@api_view(['POST'])
-def result(request):
+@api_view(['GET'])
+def result(request,pk):
     data = request.data
-    tname = data["test"]
-    sname = data["name"]
+    tname = pk
+    user = request.user
     test = Test.objects.get(tname=tname)
-    student = Student.objects.get(sname=sname)
+    student = Student.objects.get(user=user)
     student_test = Student_Test.objects.get(sname=student, tname=test)
     questions = test.question.all()
     try:
         result = Result.objects.get(tname=test, sname=student)
         time = result.time
         time = time.total_seconds()
-        h, r = divmod(time, 3600)
-        m, s = divmod(r, 60)
-        h = int(h)
-        m = int(m)
-        s = int(s)
-        if h < 10:
-            sh = "0" + str(h)
-        else:
-            sh = str(h)
-        if m < 10:
-            sm = "0" + str(m)
-        else:
-            sm = str(m)
-        if s < 10:
-            ss = "0" + str(s)
-        else:
-            ss = str(s)
-        resulttime = sh + ":" + sm + ":" + ss
-    except:
+        resulttime = sectostring(time)
+    except Exception as e:
+        print(e)
         resulttime = 0
     totaltime = test.duration.total_seconds()
-    h,r = divmod(totaltime,3600)
-    m,s = divmod(r,60)
-    h=int(h)
-    m=int(m)
-    s=int(s) 
-    if h < 10:
-        sh = "0" + str(h)
-    else:
-        sh = str(h)
-    if m < 10:
-        sm = "0" + str(m)
-    else:
-        sm = str(m)
-    if s < 10:
-        ss = "0" + str(s)
-    else:
-        ss = str(s)
-    resulttotaltime = sh + ":" + sm + ":" + ss
+    resulttotaltime = sectostring(totaltime)
     l=[]
     d={}
     d["time"] = resulttime
@@ -387,9 +392,14 @@ def result(request):
             score = Student_Question.objects.get(sname=student, qname=i, tname=test)
             d["score"] = str(score.student_score)+("/10")
             f1 = f1score(score.precision, score.recall)
-            totalscore = ((score.student_score)/10 * 0.7) + (f1 * 0.3)
+            totalscore = ((score.student_score)/10 * 0.8) + (f1 * 0.2)
             d["tscore"] = str(round((totalscore*100),2))+("/100")
-
+            if score.isPlagiarised is True:
+                score.student_score=0
+                score.precision=0
+                score.recall=0
+                score.save()
+                d["tscore"] = "Malpracticed"
         except(Exception):
             print(Exception)
             d["score"] = "0/10"

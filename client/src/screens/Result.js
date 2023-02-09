@@ -37,8 +37,11 @@ export default function Result()
     },);
     useEffect(()=>{
         const fetchData=async()=>{
-            const result=await axios.post('/result/',{
-              name,test,              
+            const result=await axios.get(`/result/${test}/`,{
+              headers:{
+                authorization:`Token ${token}`
+              },
+              test,              
             });
             setResult(result.data);
       };
