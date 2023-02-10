@@ -11,9 +11,7 @@ from pytz import timezone
 import pytz
 from datetime import timedelta
 import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
 import re
-import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -283,7 +281,7 @@ def execCode(request):
         if tceditedoutput[i] == usereditedoutput[i]:
             fp += 1
         else:
-            fn += 1
+            pass
 
     try:
         score = Student_Question.objects.get(sname=student, qname=question, tname=test)
@@ -309,7 +307,7 @@ def execCode(request):
     else:
         d = {}
         d["status"] = "private"
-        d["score"] = points
+        d["score"] = str(points) + "/10"
         l = []
         l.append(d)
         return Response(l)
@@ -654,16 +652,10 @@ def generateReport(request,pk):
     df['score'] = ((df['testcase']/total_tc) * weights['testcase']) + ((1-(df['timetaken']/test.duration.total_seconds())) * weights['timetaken']) + (df['f1_score'] * weights['f1_score'])
     df['score'] = df['score'].apply(lambda x: x*100)
     df['score'] = round(df['score'],3)
-    x = df[['testcase', 'timetaken', 'f1_score']]
-    y = df['score']
-    clf = RandomForestRegressor()
-    clf.fit(x,y)
-    calculated_scores = clf.predict(x)
-    df['calculated_score'] = calculated_scores
-    df = df.sort_values(by='calculated_score', ascending=False)
-    df['rank'] = df['calculated_score'].rank(ascending=False)
+    df = df.sort_values(by='score', ascending=False)
+    df['rank'] = df['score'].rank(ascending=False)
     df['timetaken'] = df['timetaken'].apply(sectostring)
-    df['calculated_score'] = df['calculated_score'].apply(lambda x: round(x,3))
+    df['score'] = df['score'].apply(lambda x: round(x,3))
     df.loc[df['testcase'] == 0, 'score'] = 0
     json_objects = df.to_dict(orient='records')
     return Response(json_objects)
