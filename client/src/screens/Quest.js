@@ -64,7 +64,6 @@ export default function Quest(props)
         <div>
             <div className="quest-container">
                 <div class="item quest-header">
-                    <h3 class="quest-header">Solved: 0/3</h3>
                     <h3 class="quest-header">{name}</h3>
                     <button class="logout quest-header"onClick={signoutHandler}>Logout</button>
                 </div>

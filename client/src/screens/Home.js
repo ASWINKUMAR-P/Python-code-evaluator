@@ -83,10 +83,6 @@ export default  function Home() {
         <div className="heading">
           <h2>Instructions</h2>
         </div>
-        <div className="home-box">
-          <h3>Duration: 90mins</h3>
-          <h3>Questions: 3</h3>
-        </div>
         <div className="home-instruction">
           <ul>
             <h4>About the test </h4>
