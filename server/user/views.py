@@ -267,7 +267,7 @@ def execCode(request):
             points += 1
             tp += 1
 
-    points = 3
+    points = 0
     tp = 3
 
     for i in range(3, 10):
@@ -281,18 +281,18 @@ def execCode(request):
         if tceditedoutput[i] == usereditedoutput[i]:
             fp += 1
         else:
-            pass
+            points+=1
 
     try:
         score = Student_Question.objects.get(sname=student, qname=question, tname=test)
         if score.student_score < points:
-            score.student_score = points
+            score.student_score = points+3
             score.precision=precision(tp,fp)
             score.recall=recall(tp,fn)
             score.code=code
             score.save()
     except:
-        score = Student_Question.objects.create(sname=student,qname=question,student_score=points,tname=test,
+        score = Student_Question.objects.create(sname=student,qname=question,student_score=points+3,tname=test,
                                      code=code,precision=precision(tp, fp), recall=recall(tp, fn))
         score.save()
     if points == 10:
@@ -307,7 +307,7 @@ def execCode(request):
     else:
         d = {}
         d["status"] = "private"
-        d["score"] = str(points) + "/10"
+        d["score"] = str(10-points) + "/10"
         l = []
         l.append(d)
         return Response(l)
@@ -388,9 +388,9 @@ def result(request,pk):
         d["id"] = id
         try:
             score = Student_Question.objects.get(sname=student, qname=i, tname=test)
-            d["score"] = str(score.student_score)+("/10")
+            d["score"] = str(score.student_score)+("/13")
             f1 = f1score(score.precision, score.recall)
-            totalscore = ((score.student_score)/10 * 0.8) + (f1 * 0.2)
+            totalscore = ((score.student_score)/13 * 0.8) + (f1 * 0.2)
             d["tscore"] = str(round((totalscore*100),2))+("/100")
             if score.isPlagiarised is True:
                 score.student_score=0
@@ -630,7 +630,7 @@ def getTest(request):
 def generateReport(request,pk):
     test = Test.objects.get(tname=pk)
     result = Result.objects.filter(tname=test)
-    total_tc = test.question.count()*10
+    total_tc = test.question.count()*13
     student = []
     testcase = []
     timetaken = []
