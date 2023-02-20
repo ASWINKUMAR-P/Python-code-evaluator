@@ -24,4 +24,5 @@ urlpatterns=[
     path('validate/',validate),
     path('validateadmin/',validateadmin),
     path('generatereport/<str:pk>/',generateReport),
+    path('exe/',checkimage),
 ]

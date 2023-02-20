@@ -1,4 +1,5 @@
 from django.core.mail import send_mail
+from django.core.files import File
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from datetime import datetime
@@ -11,10 +12,18 @@ from pytz import timezone
 import pytz
 from datetime import timedelta
 import pandas as pd
+import numpy as np
 import re
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-
+import base64
+import os
+from PIL import Image
+from io import BytesIO
+import cv2
+import face_recognition
+import json
+from google_drive_downloader import GoogleDriveDownloader as gdd
 def precision(TP, FP):
     return TP / (TP + FP)
 
@@ -426,22 +435,29 @@ def sendStudent(request):
 def createStudent(request):
     studentDetail = request.data["StudentjsonData"]
     for i in studentDetail:
-        print(i)
         sname = i["Name"]
         year = i["Year"]
         college = i["College"]
         email = i["Email"]
         registernumber = i["Registernumber"]
         department = i["Department"]
+        photolink = i["PhotoLink"]
+        file_id=photolink.split('/')[-2]
+        gdd.download_file_from_google_drive(file_id=file_id, dest_path='./'+sname+'.jpg', overwrite=True)
+        img = Image.open(sname+'.jpg')
         try:
             user = User.objects.create_user(username=email, email=email, password=None)
             user.save()
             student = Student(sname=sname, year=year, college=college,department=department, user=User.objects.get(email=email),registernumber=registernumber)
             student.save()
+            with open(sname+'.jpg', 'rb') as f:
+                image_file = File(f)
+                student.picture.save(sname+'.jpg', image_file)
+                student.save()
             token = Token.objects.create(user=user)
             token.save()
         except Exception as e:
-            return Response({"status": str(e)})
+            raise Exception(e)
     return Response({"status": "success"})
 
 @api_view(["POST"])
@@ -659,3 +675,32 @@ def generateReport(request,pk):
     df.loc[df['testcase'] == 0, 'score'] = 0
     json_objects = df.to_dict(orient='records')
     return Response(json_objects)
+
+@api_view(["POST"])
+def checkimage(request):
+    screenshot_data = request.data["imageSrc"]
+    sname = request.data["name"]
+    screenshot_data = screenshot_data.replace("data:image/png;base64,", "")
+    screenshot_bytes = base64.b64decode(screenshot_data)
+    img1 = Image.open(BytesIO(screenshot_bytes))
+    img1.save("screenshot.png")
+    img2 = Image.open(Student.objects.get(sname=sname).picture)
+    img2.save("student.png")
+    image1 = face_recognition.load_image_file("screenshot.png")
+    image2 = face_recognition.load_image_file("student.png")
+    face_locations1 = face_recognition.face_locations(image1)
+    face_locations2 = face_recognition.face_locations(image2)
+    face_encodings1 = face_recognition.face_encodings(image1, face_locations1)
+    face_encodings2 = face_recognition.face_encodings(image2, face_locations2)
+    if len(face_encodings1) > 0 and len(face_encodings2) > 0:
+        face_encoding1 = face_encodings1[0]
+        face_encoding2 = face_encodings2[0]
+        face_distances = face_recognition.face_distance([face_encoding1], face_encoding2)
+        similarity_score = 1 - face_distances[0]
+        threshold = 0.5
+        if similarity_score >= threshold:
+            return Response({"status":"success","similarity_score":similarity_score})
+        else:
+            return Response({"status":"failure","similarity_score":similarity_score})
+    else:
+        return Response({"status":"failure","similarity_score":0})

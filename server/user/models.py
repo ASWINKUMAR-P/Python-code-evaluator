@@ -8,6 +8,7 @@ class Student(models.Model):
     year = models.SmallIntegerField()
     department = models.CharField(max_length=255)
     registernumber = models.CharField(max_length=255) 
+    picture  = models.ImageField(upload_to='profile_pics',blank=True)
     def __str__(self):
         return self.sname
 

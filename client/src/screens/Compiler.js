@@ -34,6 +34,8 @@ function useWarningCount() {
           Authorization:`Token ${localStorage.getItem("Token")}`
         }
       });
+      localStorage.removeItem('warningCount');
+      localStorage.removeItem('deadline');
       navigate(`/home/${data.name}/result`);
     }
   },[warningCount]);
@@ -85,6 +87,8 @@ function Compiler() {
           }
         });
         window.alert("Time Up");
+        localStorage.removeItem('warningCount');
+        localStorage.removeItem('deadline');
         navigate(`/home/${data.name}/result`);
       } else {
         setTimerHours(hours);
@@ -192,8 +196,7 @@ function Compiler() {
     fetchData();
     //startTimer();
   },[id],[warnings]);
-
-  console.log(question);
+  
   return (
     <div class="wrapper">
       <div class="section">

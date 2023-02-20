@@ -34,7 +34,7 @@ export default function Login()
           localStorage.setItem('Token',data[0].Token);
           localStorage.setItem('Test',data[0].test);
           if(data[0].status===false){
-          navigate(`/home/${firstname}`);
+          navigate(`/verify/${firstname}`);
           }
           else{
             navigate(`/home/${firstname}/result`);

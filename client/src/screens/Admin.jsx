@@ -18,9 +18,8 @@ export default function Admin() {
   const [status, setStatus] = useState()
   const [StudentjsonData, setStudentjsonData] = useState('');
   const [QuestionjsonData, setQuestionjsonData] = useState('');
-  var admindata;
   const token = localStorage.getItem("Token");
-
+  var admindata;
   useEffect(()=>{
     const fetchData=async()=>{
       try{
@@ -31,7 +30,6 @@ export default function Admin() {
         });
       }
       catch(error){
-        //alert("Please login with admin credentials!!!");
         window.alert("Please login with admin credentials!!!");
         localStorage.clear();
         navigate('/');
@@ -49,14 +47,12 @@ export default function Admin() {
   const studentSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      const result = await Axios.post(`/createStudent/`, {
+      const result = await Axios.post(`/createStudent/`,{
         StudentjsonData,
       })
-      console.log(StudentjsonData);
       window.alert("Data updated successfully!!!");
     }
     catch (err) {
-      
       window.alert("Enter valid file with valid data");
       console.log(err);
     }
