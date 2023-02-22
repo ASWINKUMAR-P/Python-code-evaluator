@@ -2,10 +2,7 @@ import React, { useEffect } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import Axios from 'axios';
 import { useState } from 'react';
-// import Quest from "./Quest";
-import excelformat from './images/excelformat.jpg';
 import excelicon from './images/excelicon.jpg';
-import excelfile from './images/excelfile.jpg';
 import axios from "axios";
 import "./home.css";
 import "./admin.css";
@@ -18,8 +15,9 @@ export default function Admin() {
   const [status, setStatus] = useState()
   const [StudentjsonData, setStudentjsonData] = useState('');
   const [QuestionjsonData, setQuestionjsonData] = useState('');
-  const token = localStorage.getItem("Token");
   var admindata;
+  const token = localStorage.getItem("Token");
+
   useEffect(()=>{
     const fetchData=async()=>{
       try{
@@ -47,12 +45,14 @@ export default function Admin() {
   const studentSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      const result = await Axios.post(`/createStudent/`,{
+      const result = await Axios.post(`/createStudent/`, {
         StudentjsonData,
       })
+      console.log(StudentjsonData);
       window.alert("Data updated successfully!!!");
     }
     catch (err) {
+      
       window.alert("Enter valid file with valid data");
       console.log(err);
     }
