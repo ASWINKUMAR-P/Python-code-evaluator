@@ -75,16 +75,6 @@ def checkPlagiarism(code1,code2):
     else:
         return False
 
-def get_webcam_image():
-    cap = cv2.VideoCapture(0)
-    ret, frame = cap.read()
-    cap.release()
-    if not ret:
-        print("Unable to read the image")
-        return None
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    return frame
-
 @permission_classes([AllowAny,])
 @api_view(["POST"])
 def login(request):
