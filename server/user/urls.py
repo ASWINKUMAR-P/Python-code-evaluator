@@ -9,7 +9,6 @@ urlpatterns=[
     path('sendstudent/', sendStudent),
     path('sendquestion/', sendQuestion),
     path('createTest/', createTest),
-    #path('time/<str:pk1>/<str:pk2>/',setTimer),
     path('timer/',setTimer),
     path('question/<str:pk1>/<str:pk2>', getQuestion),
     path('getquestion/<str:pk>/',getQuestions),
@@ -24,5 +23,6 @@ urlpatterns=[
     path('validate/',validate),
     path('validateadmin/',validateadmin),
     path('generatereport/<str:pk>/',generateReport),
-    path('exe/',checkimage),
+    path('exe/',verifyimage),
+    path('take/',takeimage),
 ]

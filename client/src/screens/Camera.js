@@ -10,7 +10,6 @@ const videoConstraints={
     facingMode:'environment'
 }
 
-
 const Camera=()=>{
     const webcamRef=useRef(null);
     const[url,setUrl]=useState(null);
@@ -32,6 +31,9 @@ const Camera=()=>{
               });
         if(result.data.status=="success"){
             navigate(`/home/${name}`);
+        }
+        else{
+            alert("Image is not clear");
         }  
         }
         catch (err) {

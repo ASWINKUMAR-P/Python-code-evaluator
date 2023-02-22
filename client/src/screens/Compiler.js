@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { render } from 'react-dom';
 import "./compiler.css";
 import { Link } from 'react-router-dom';
+import Webcam from 'react-webcam';
 import CompilerComponent from '../components/CompilerComponent';
 import OutputComponent from '../components/OutputComponent';
 import CodeCompiledComponent from '../components/CodeCompiledComponent';
@@ -14,6 +15,34 @@ import { Store } from '../Store';
 import Modal from '../components/Modal';
 import QuestionHamburgerComponent from '../components/QuestionHamburgerComponent';
 
+function useProctCount()
+{
+  const navigate = useNavigate();
+  const [proctCount, setProctCount] = useState(() => {
+    const proctCount = Number(localStorage.getItem('proctCount'))
+    return proctCount > 0 ? proctCount : 0
+  });
+
+  useEffect(() => {
+    const test = localStorage.getItem('Test');
+    localStorage.setItem('proctCount', proctCount);
+    if (proctCount >= 10) {
+      window.alert("You have exceeded the number of warnings");
+      const data=axios.get(`/submit/${test}`,{
+        headers:{
+          Authorization:`Token ${localStorage.getItem("Token")}`
+        }
+      });
+      localStorage.removeItem('proctCount');
+      localStorage.removeItem('deadline');
+      navigate(`/home/${data.name}/result`);
+    }
+  },[proctCount]);
+  return [proctCount, setProctCount];
+}
+
+
+
 function useWarningCount() {
   const navigate = useNavigate();
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -21,14 +50,13 @@ function useWarningCount() {
     const count = Number(localStorage.getItem('warningCount'))
     return count > 0 ? count : 0
   });
-
   useEffect(() => {
     const test = localStorage.getItem('Test');
     localStorage.setItem('warningCount', warningCount);
-    if (warningCount >= 3) {
+    if (warningCount >= 40) {
       window.alert("You have exceeded the number of attempts.");
       ctxDispatch({ type: 'DELETE_USERINFO' });
-      localStorage.setItem('warningCount', 1);
+      localStorage.setItem('warningCount', 0);
       const data=axios.get(`/submit/${test}`,{
         headers:{
           Authorization:`Token ${localStorage.getItem("Token")}`
@@ -53,6 +81,7 @@ function Compiler() {
   const [output, setOutput] = useState([])
   const [question, setQuestion] = useState([]);
   const [name, setName] = useState([]);
+  const [status,setStatus] = useState("");
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo } = state;
   const test = localStorage.getItem('Test');
@@ -75,7 +104,6 @@ function Compiler() {
       const distance = countDownDate - now;
       console.log(now);
       console.log(distance)
-      //console.log(distance);
       const hours = Math.floor((distance % (24 * 60 * 60 * 1000)) / (1000 * 60 * 60));
       const minutes = Math.floor((distance % (60 * 60 * 1000)) / (1000 * 60));
       const seconds = Math.floor((distance % (60 * 1000)) / 1000);
@@ -100,11 +128,13 @@ function Compiler() {
 
   useEffect(() => {
     startTimer();
+    
     return () => {
       clearInterval(interval.current);
     };
   }, [countDownDate]);
-
+  //  console.log(proctCount);
+  console.log(status)
   useEffect(()=>{
     const fetchData=async()=>{
       try{
@@ -153,8 +183,11 @@ function Compiler() {
     }
   },[tempcode]);
  
+  
   console.log(tempcode);
   const [warningCount, setWarningCount] = useWarningCount();
+  const [proctCount, setProctCount] = useProctCount();
+
   
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -174,6 +207,37 @@ function Compiler() {
       console.log(err);
     }
   }
+
+  useEffect(() => {
+    const interval=setInterval(()=>{
+      const fetchData=async()=>{
+        try{
+          const result = await axios.get(`/take`);
+          setStatus(result.data.status);
+          if(result.data.status=='Cheating')
+      {
+        console.log("hi")
+        setProctCount(proctCount+1);
+      }
+        }
+        catch(error){
+          console.log(error)
+        }
+      }
+      fetchData();
+      // const {status:statusflag}=status;
+      const {flag}=status;
+      
+    },3000)
+    return ()=>{
+      clearInterval(interval)
+    };
+  },[proctCount]);
+  
+
+  console.log(proctCount)
+  console.log(status.status)
+
   useEffect(() => {
     function handleVisibilityChange() {
       if (document.visibilityState === 'hidden') {
@@ -195,7 +259,7 @@ function Compiler() {
     }; 
     fetchData();
     //startTimer();
-  },[id],[warnings]);
+  },[id]);
   
   return (
     <div class="wrapper">
@@ -225,7 +289,7 @@ function Compiler() {
       <div class="row">
         <div class="column quest1">
           {compile.map((q) => {
-            console.log(q);
+            // console.log(q);
             return (
               <CompilerComponent
                 qnum={q.id}

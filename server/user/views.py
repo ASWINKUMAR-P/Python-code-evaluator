@@ -21,9 +21,11 @@ import os
 from PIL import Image
 from io import BytesIO
 import cv2
+import mediapipe as mp
 import face_recognition
 import json
 from google_drive_downloader import GoogleDriveDownloader as gdd
+import dlib
 def precision(TP, FP):
     return TP / (TP + FP)
 
@@ -72,6 +74,16 @@ def checkPlagiarism(code1,code2):
         return True
     else:
         return False
+
+def get_webcam_image():
+    cap = cv2.VideoCapture(0)
+    ret, frame = cap.read()
+    cap.release()
+    if not ret:
+        print("Unable to read the image")
+        return None
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    return frame
 
 @permission_classes([AllowAny,])
 @api_view(["POST"])
@@ -375,6 +387,8 @@ def result(request,pk):
     student = Student.objects.get(user=user)
     student_test = Student_Test.objects.get(sname=student, tname=test)
     questions = test.question.all()
+    totaltime = test.duration.total_seconds()
+    resulttotaltime = sectostring(totaltime)
     try:
         result = Result.objects.get(tname=test, sname=student)
         time = result.time
@@ -382,9 +396,7 @@ def result(request,pk):
         resulttime = sectostring(time)
     except Exception as e:
         print(e)
-        resulttime = 0
-    totaltime = test.duration.total_seconds()
-    resulttotaltime = sectostring(totaltime)
+        resulttime = sectostring(totaltime)
     l=[]
     d={}
     d["time"] = resulttime
@@ -677,7 +689,7 @@ def generateReport(request,pk):
     return Response(json_objects)
 
 @api_view(["POST"])
-def checkimage(request):
+def verifyimage(request):
     screenshot_data = request.data["imageSrc"]
     sname = request.data["name"]
     screenshot_data = screenshot_data.replace("data:image/png;base64,", "")
@@ -704,3 +716,24 @@ def checkimage(request):
             return Response({"status":"failure","similarity_score":similarity_score})
     else:
         return Response({"status":"failure","similarity_score":0})
+
+@api_view(["GET"])
+def takeimage(request):
+    cam = cv2.VideoCapture(0)
+    ret, img = cam.read()
+    cv2.imwrite("user.png", img)
+    cam.release()
+    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+    eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
+    img = cv2.imread('user.png')
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+    for (x,y,w,h) in faces:
+        roi_gray = gray[y:y+h, x:x+w]
+        roi_color = img[y:y+h, x:x+w]
+        eyes = eye_cascade.detectMultiScale(roi_gray)
+        if len(eyes) > 0:
+            return Response({"status":"Not Cheating"})
+        else:
+            return Response({"status":"Cheating"})
+    return Response({"status":"Cheating"})
