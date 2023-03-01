@@ -30,6 +30,11 @@ export default function ReportComponent(props) {
         <td>
           <td>{props.score}</td>
         </td>
+        <td>
+          <div className="status">
+          <td>{props.status}</td>
+        </div>
+        </td>
       </tr>
     </tbody>
   );

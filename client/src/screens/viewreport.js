@@ -101,6 +101,7 @@ export default function ViewReport(props) {
                     <th colspan="2">Name</th>
                     <th className="finish-time">Time</th>
                     <th>Score</th>
+                    <th>Status</th>
                   </tr>
                 </thead>
               
@@ -113,6 +114,7 @@ export default function ViewReport(props) {
                       rank={q.rank}
                       time={q.timetaken}
                       score={q.score}
+                      status={q.endstatus}
                     />
                 );
               }
