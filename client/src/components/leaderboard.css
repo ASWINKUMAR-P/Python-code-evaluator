@@ -79,7 +79,7 @@
     text-align: left;
     font-weight: normal;
     font-size: 1.1rem;
-    color: white;
+    color: black;
   }
   
   .myblock th:last-child {
@@ -221,4 +221,8 @@
 
 .dropdown:hover .dropdown-content {
   display: block;
+}
+.status{
+  width:25vw;
+  padding-left:0px;
 }

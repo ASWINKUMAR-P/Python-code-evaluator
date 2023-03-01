@@ -181,7 +181,7 @@ outline:none;
 
 
   .leaderboard {
-    max-width: 490px;
+    max-width: fit-content;
     width: 100%;
     border-radius: 12px;
     margin-top:40px;
@@ -310,7 +310,7 @@ outline:none;
     border-collapse: collapse;
     text-align: center;
     min-width: 100%;
-    grid-template-columns: 100px 170px 1fr 1fr;
+    grid-template-columns: 100px 170px 130px 130px 1fr;
       background: #f6f5f5;
       border-radius: 35px;
   }
@@ -346,6 +346,7 @@ outline:none;
     font-size: 1.1rem;
     /* color: white; */
     font-weight: bold;
+    color:black;
   }
   
   .my-block th:last-child {
