@@ -26,6 +26,7 @@ import face_recognition
 import json
 from google_drive_downloader import GoogleDriveDownloader as gdd
 import dlib
+
 def precision(TP, FP):
     return TP / (TP + FP)
 
@@ -133,6 +134,8 @@ def starttest(request):
     student_test.save()
     student_test1 = Student_Test.objects.get(sname=student, tname=test)
     deadline = (student_test1.starttime.timestamp() + test.duration.total_seconds())*1000
+    global cam
+    cam = cv2.VideoCapture(0)
     return Response({
         "status": "success",
         "deadline" : deadline
@@ -325,12 +328,14 @@ def execCode(request):
 
 @permission_classes([IsAuthenticated],)
 @api_view(['GET'])
-def submit(request,pk):
+def submit(request,pk1,pk2):
+    cam.release()
     data = request.data
     token = request.auth
     user = request.user
     student = Student.objects.get(user=user)
-    tname = pk
+    tname = pk1
+    endstatus = pk2
     test = Test.objects.get(tname=tname)
     student_test = Student_Test.objects.get(sname=student, tname=test)
     student_test.completed = True
@@ -359,7 +364,7 @@ def submit(request,pk):
     student_test.endtime = datetime.now(pytz.UTC)
     student_test.save()
     time = student_test.endtime - student_test.starttime
-    result = Result.objects.create(sname=student, tname=test, score=total_score, time=time,
+    result = Result.objects.create(sname=student, tname=test, score=total_score, time=time,endstatus=endstatus,
                                    total_precision=total_precision, total_recall=total_recall,isMalpractice=isPlagiarism)
     result.save()
     student_test.save()
@@ -383,6 +388,8 @@ def result(request,pk):
         result = Result.objects.get(tname=test, sname=student)
         time = result.time
         time = time.total_seconds()
+        if totaltime<time:
+            raise Exception("Time Exceeded")
         resulttime = sectostring(time)
     except Exception as e:
         print(e)
@@ -416,7 +423,7 @@ def result(request,pk):
         l.append(d)
     return Response(l)
 
-#####################################################################################################################
+###############################################################################################################################################################################
 @api_view(["GET"])
 def sendStudent(request):
     students = Student.objects.all()
@@ -437,144 +444,114 @@ def sendStudent(request):
 def createStudent(request):
     studentDetail = request.data["StudentjsonData"]
     for i in studentDetail:
-        sname = i["Name"]
-        year = i["Year"]
-        college = i["College"]
-        email = i["Email"]
-        registernumber = i["Registernumber"]
-        department = i["Department"]
-        photolink = i["PhotoLink"]
-        file_id=photolink.split('/')[-2]
-        gdd.download_file_from_google_drive(file_id=file_id, dest_path='./'+sname+'.jpg', overwrite=True)
-        img = Image.open(sname+'.jpg')
         try:
-            user = User.objects.create_user(username=email, email=email, password=None)
-            user.save()
-            student = Student(sname=sname, year=year, college=college,department=department, user=User.objects.get(email=email),registernumber=registernumber)
-            student.save()
-            with open(sname+'.jpg', 'rb') as f:
-                image_file = File(f)
-                student.picture.save(sname+'.jpg', image_file)
+            sname = i["Name"]
+            year = i["Year"]
+            college = i["College"]
+            email = i["Email"]
+            registernumber = i["Registernumber"]
+            department = i["Department"]
+            photolink = i["PhotoLink"]
+            if sname is None or year is None or college is None or email is None or registernumber is None or department is None or photolink is None:
+                return Response({"status":"Some rows are not filled properly"})
+            file_id=photolink.split('/')[-2]
+            gdd.download_file_from_google_drive(file_id=file_id, dest_path='./'+sname+'.jpg', overwrite=True)
+            img = Image.open(sname+'.jpg')
+            try:
+                user = User.objects.create_user(username=email, email=email, password=None)
+                user.save()
+                student = Student(sname=sname, year=year, college=college,department=department, user=User.objects.get(email=email),registernumber=registernumber)
                 student.save()
-            token = Token.objects.create(user=user)
-            token.save()
+                with open(sname+'.jpg', 'rb') as f:
+                    image_file = File(f)
+                    student.picture.save(sname+'.jpg', image_file)
+                    student.save()
+                token = Token.objects.create(user=user)
+                token.save()
+            except Exception as e:
+                return Response({"status": "Same data is already present or format of data may be wrong"})
         except Exception as e:
-            raise Exception(e)
-    return Response({"status": "success"})
+            return Response({"status": "Few details are not filled properly"})
+    return Response({"status": "Data is successfully added"})
 
 @api_view(["POST"])
 def createQuestion(request):
     questionDetail = request.data["QuestionjsonData"]
-    for i in questionDetail:
-        qname = i["qname"]
-        desc = i["desc"]
-        level = i["level"]
-        points = i["points"]
-        const1 = i["const1"]
-        const2 = i["const2"]
-        testcaseinput1 = i["testcaseinput1"]
-        testcaseoutput1 = i["testcaseoutput1"]
-        testcaseinput2 = i["testcaseinput2"]
-        testcaseoutput2 = i["testcaseoutput2"]
-        testcaseinput3 = i["testcaseinput3"]
-        testcaseoutput3 = i["testcaseoutput3"]
-        testcaseinput4 = i["testcaseinput4"]
-        testcaseoutput4 = i["testcaseoutput4"]
-        testcaseinput5 = i["testcaseinput5"]
-        testcaseoutput5 = i["testcaseoutput5"]
-        testcaseinput6 = i["testcaseinput6"]
-        testcaseoutput6 = i["testcaseoutput6"]
-        testcaseinput7 = i["testcaseinput7"]
-        testcaseoutput7 = i["testcaseoutput7"]
-        testcaseinput8 = i["testcaseinput8"]
-        testcaseoutput8 = i["testcaseoutput8"]
-        testcaseinput9 = i["testcaseinput9"]
-        testcaseoutput9 = i["testcaseoutput9"]
-        testcaseinput10 = i["testcaseinput10"]
-        testcaseoutput10 = i["testcaseoutput10"]
-        testcaseinput11 = i["testcaseinput11"]
-        testcaseoutput11 = i["testcaseoutput11"]
-        testcaseinput12 = i["testcaseinput12"]
-        testcaseoutput12 = i["testcaseoutput12"]
-        testcaseinput13 = i["testcaseinput13"]
-        testcaseoutput13 = i["testcaseoutput13"]
-        try:
-            question = Question(
-                qname=qname,
-                desc=desc,
-                level=level,
-                points=points,
-                const1=const1,
-                const2=const2,
-                testcaseinput1=testcaseinput1,
-                testcaseoutput1=testcaseoutput1,
-                testcaseinput2=testcaseinput2,
-                testcaseoutput2=testcaseoutput2,
-                testcaseinput3=testcaseinput3,
-                testcaseoutput3=testcaseoutput3,
-                testcaseinput4=testcaseinput4,
-                testcaseoutput4=testcaseoutput4,
-                testcaseinput5=testcaseinput5,
-                testcaseoutput5=testcaseoutput5,
-                testcaseinput6=testcaseinput6,
-                testcaseoutput6=testcaseoutput6,
-                testcaseinput7=testcaseinput7,
-                testcaseoutput7=testcaseoutput7,
-                testcaseinput8=testcaseinput8,
-                testcaseoutput8=testcaseoutput8,
-                testcaseinput9=testcaseinput9,
-                testcaseoutput9=testcaseoutput9,
-                testcaseinput10=testcaseinput10,
-                testcaseoutput10=testcaseoutput10,
-                testcaseinput11=testcaseinput11,
-                testcaseoutput11=testcaseoutput11,
-                testcaseinput12=testcaseinput12,
-                testcaseoutput12=testcaseoutput12,
-                testcaseinput13=testcaseinput13,
-                testcaseoutput13=testcaseoutput13
-            )
-            question.save()
-        except Exception as e:
-            return Response({"status": str(e)})
+    try:
+        for i in questionDetail:
+            qname = i["qname"]
+            desc = i["desc"]
+            level = i["level"]
+            points = i["points"]
+            const1 = i["const1"]
+            const2 = i["const2"]
+            testcaseinput1 = i["testcaseinput1"]
+            testcaseoutput1 = i["testcaseoutput1"]
+            testcaseinput2 = i["testcaseinput2"]
+            testcaseoutput2 = i["testcaseoutput2"]
+            testcaseinput3 = i["testcaseinput3"]
+            testcaseoutput3 = i["testcaseoutput3"]
+            testcaseinput4 = i["testcaseinput4"]
+            testcaseoutput4 = i["testcaseoutput4"]
+            testcaseinput5 = i["testcaseinput5"]
+            testcaseoutput5 = i["testcaseoutput5"]
+            testcaseinput6 = i["testcaseinput6"]
+            testcaseoutput6 = i["testcaseoutput6"]
+            testcaseinput7 = i["testcaseinput7"]
+            testcaseoutput7 = i["testcaseoutput7"]
+            testcaseinput8 = i["testcaseinput8"]
+            testcaseoutput8 = i["testcaseoutput8"]
+            testcaseinput9 = i["testcaseinput9"]
+            testcaseoutput9 = i["testcaseoutput9"]
+            testcaseinput10 = i["testcaseinput10"]
+            testcaseoutput10 = i["testcaseoutput10"]
+            testcaseinput11 = i["testcaseinput11"]
+            testcaseoutput11 = i["testcaseoutput11"]
+            testcaseinput12 = i["testcaseinput12"]
+            testcaseoutput12 = i["testcaseoutput12"]
+            testcaseinput13 = i["testcaseinput13"]
+            testcaseoutput13 = i["testcaseoutput13"]
+            try:
+                question = Question(
+                    qname=qname,
+                    desc=desc,
+                    level=level,
+                    points=points,
+                    const1=const1,
+                    const2=const2,
+                    testcaseinput1=testcaseinput1,
+                    testcaseoutput1=testcaseoutput1,
+                    testcaseinput2=testcaseinput2,
+                    testcaseoutput2=testcaseoutput2,
+                    testcaseinput3=testcaseinput3,
+                    testcaseoutput3=testcaseoutput3,
+                    testcaseinput4=testcaseinput4,
+                    testcaseoutput4=testcaseoutput4,
+                    testcaseinput5=testcaseinput5,
+                    testcaseoutput5=testcaseoutput5,
+                    testcaseinput6=testcaseinput6,
+                    testcaseoutput6=testcaseoutput6,
+                    testcaseinput7=testcaseinput7,
+                    testcaseoutput7=testcaseoutput7,
+                    testcaseinput8=testcaseinput8,
+                    testcaseoutput8=testcaseoutput8,
+                    testcaseinput9=testcaseinput9,
+                    testcaseoutput9=testcaseoutput9,
+                    testcaseinput10=testcaseinput10,
+                    testcaseoutput10=testcaseoutput10,
+                    testcaseinput11=testcaseinput11,
+                    testcaseoutput11=testcaseoutput11,
+                    testcaseinput12=testcaseinput12,
+                    testcaseoutput12=testcaseoutput12,
+                    testcaseinput13=testcaseinput13,
+                    testcaseoutput13=testcaseoutput13
+                )
+                question.save()
+            except Exception as e:
+                return Response({"status": str(e)})
+    except Exception as e:
+        return Response({"status": str(e)})
     return Response({"status": "success"})
-
-@api_view(["GET"])
-def getLeaderBoard(request, pk):
-    tname = pk
-    test = Test.objects.get(tname=tname)
-    result = Result.objects.filter(tname=test)
-    result = result.order_by("score")
-    result = result.order_by("time")
-    rank = 1
-    l = []
-    for i in result:
-        d = {}
-        d["rank"] = rank
-        d["name"] = i.sname.sname
-
-        time = i.time.total_seconds()
-        h, r = divmod(time, 3600)
-        m, s = divmod(r, 60)
-        h = int(h)
-        m = int(m)
-        s = int(s)
-        if h < 10:
-            sh = "0" + str(h)
-        else:
-            sh = str(h)
-        if m < 10:
-            sm = "0" + str(m)
-        else:
-            sm = str(m)
-        if s < 10:
-            ss = "0" + str(s)
-        else:
-            ss = str(s)
-        resulttime = sh + ":" + sm + ":" + ss
-        d["time"] = resulttime
-        l.append(d)
-        rank += 1
-    return Response(l)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -653,17 +630,20 @@ def generateReport(request,pk):
     testcase = []
     timetaken = []
     f1_score = []
+    endstatus = []
     dataset = {}
     for i in result:
         student.append(i.sname.sname)
         testcase.append(i.score)
         timetaken.append(i.time.total_seconds())
         f1_score.append(f1score(i.total_recall,i.total_precision))
+        endstatus.append(i.endstatus)
     
     dataset["student"] = student
     dataset["testcase"] = testcase
     dataset["timetaken"] = timetaken
     dataset["f1_score"] = f1_score
+    dataset["endstatus"] = endstatus
 
     df = pd.DataFrame(dataset)
     weights = {'testcase': 0.7, 'timetaken': 0.15, 'f1_score': 0.15}
@@ -709,10 +689,8 @@ def verifyimage(request):
 
 @api_view(["GET"])
 def takeimage(request):
-    cam = cv2.VideoCapture(0)
     ret, img = cam.read()
     cv2.imwrite("user.png", img)
-    cam.release()
     face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
     eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
     img = cv2.imread('user.png')

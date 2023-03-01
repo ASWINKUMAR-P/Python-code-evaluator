@@ -87,3 +87,4 @@ class Result(models.Model):
     total_precision = models.FloatField(default=None)
     total_recall = models.FloatField(default=None)
     isMalpractice = models.BooleanField(default=False)
+    endstatus = models.CharField(max_length=20, default=None, null=True, blank=True)
