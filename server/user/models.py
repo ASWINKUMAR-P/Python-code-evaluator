@@ -8,6 +8,7 @@ class Student(models.Model):
     year = models.SmallIntegerField()
     department = models.CharField(max_length=255)
     registernumber = models.CharField(max_length=255) 
+    picture  = models.ImageField(upload_to='profile_pics',blank=True)
     def __str__(self):
         return self.sname
 
@@ -86,3 +87,4 @@ class Result(models.Model):
     total_precision = models.FloatField(default=None)
     total_recall = models.FloatField(default=None)
     isMalpractice = models.BooleanField(default=False)
+    endstatus = models.CharField(max_length=20, default=None, null=True, blank=True)

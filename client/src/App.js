@@ -12,6 +12,7 @@ import Result from './screens/Result.js';
 import Compiler from './screens/Compiler.js';
 import ViewReport from './screens/viewreport.js';
 import Report from './screens/report.js';
+import Verify from './screens/Verify.js';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path='/report' element={<Report/>}/>
           <Route path='/report/:id'element={<ViewReport/>}/>
           <Route path='/' element={<Login/>}/>
+          <Route path='/verify/:name' element={<Verify/>}/>
       </Routes>
     </BrowserRouter>
   );

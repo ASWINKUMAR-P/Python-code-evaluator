@@ -18,7 +18,7 @@ export default function ResultComponent(props)
           <td>
             <div class="result-box">{props.passed}</div>
           </td>
-          <td>{props.score}</td>
+          <td>{props.tscore}</td>
         </tr>
         </tbody> 
     )

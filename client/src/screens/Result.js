@@ -60,7 +60,7 @@ export default function Result()
         <li><Link to="/" onClick={logout}class="admin-logout log">Logout</Link></li>
         <li class="admin-logout">{test}</li>
     </ul>
-<div className="result-block" style={{display:'flex'}}>
+<div className="result-block">
 <div class="myblock1">
 <h2>{name}</h2>
 {times.map((q)=>{
@@ -85,7 +85,7 @@ export default function Result()
      <ResultComponent
  questnum={q.id}
  passed={q.score}
-  score={q.tscore}
+tscore={q.tscore}
  />
  );
  }

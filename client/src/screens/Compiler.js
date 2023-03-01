@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { render } from 'react-dom';
 import "./compiler.css";
 import { Link } from 'react-router-dom';
+import Webcam from 'react-webcam';
 import CompilerComponent from '../components/CompilerComponent';
 import OutputComponent from '../components/OutputComponent';
 import CodeCompiledComponent from '../components/CodeCompiledComponent';
@@ -13,6 +14,36 @@ import PublicComponent from '../components/PublicComponent';
 import { Store } from '../Store';
 import Modal from '../components/Modal';
 import QuestionHamburgerComponent from '../components/QuestionHamburgerComponent';
+import Camera from '../components/camera';
+
+function useProctCount()
+{
+  const navigate = useNavigate();
+  const [proctCount, setProctCount] = useState(() => {
+    const proctCount = Number(localStorage.getItem('proctCount'))
+    return proctCount > 0 ? proctCount : 0
+  });
+
+  useEffect(() => {
+    const test = localStorage.getItem('Test');
+    localStorage.setItem('proctCount', proctCount);
+    if (proctCount >= 2) {
+      const endstatus = "Moved from screen";
+      window.alert("You have exceeded the number of warnings");
+      const data=axios.get(`/submit/${test}/${endstatus}`,{
+        headers:{
+          Authorization:`Token ${localStorage.getItem("Token")}`
+        }
+      });
+      localStorage.removeItem('proctCount');
+      localStorage.removeItem('deadline');
+      navigate(`/home/${data.name}/result`);
+    }
+  },[proctCount]);
+  return [proctCount, setProctCount];
+}
+
+
 
 function useWarningCount() {
   const navigate = useNavigate();
@@ -21,19 +52,21 @@ function useWarningCount() {
     const count = Number(localStorage.getItem('warningCount'))
     return count > 0 ? count : 0
   });
-
   useEffect(() => {
     const test = localStorage.getItem('Test');
     localStorage.setItem('warningCount', warningCount);
     if (warningCount >= 3) {
       window.alert("You have exceeded the number of attempts.");
       ctxDispatch({ type: 'DELETE_USERINFO' });
-      localStorage.setItem('warningCount', 1);
-      const data=axios.get(`/submit/${test}`,{
+      localStorage.setItem('warningCount', 0);
+      const endstatus = "Tab switched";
+      const data=axios.get(`/submit/${test}/${endstatus}`,{
         headers:{
           Authorization:`Token ${localStorage.getItem("Token")}`
         }
       });
+      localStorage.removeItem('warningCount');
+      localStorage.removeItem('deadline');
       navigate(`/home/${data.name}/result`);
     }
   },[warningCount]);
@@ -51,6 +84,7 @@ function Compiler() {
   const [output, setOutput] = useState([])
   const [question, setQuestion] = useState([]);
   const [name, setName] = useState([]);
+  const [status,setStatus] = useState("");
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo } = state;
   const test = localStorage.getItem('Test');
@@ -64,7 +98,6 @@ function Compiler() {
   let interval = useRef();
   let time;
   let compiledata;
-
   const startTimer = () => {
     setCountDownDate(deadline);
     interval.current = setInterval(() => {
@@ -73,18 +106,20 @@ function Compiler() {
       const distance = countDownDate - now;
       console.log(now);
       console.log(distance)
-      //console.log(distance);
       const hours = Math.floor((distance % (24 * 60 * 60 * 1000)) / (1000 * 60 * 60));
       const minutes = Math.floor((distance % (60 * 60 * 1000)) / (1000 * 60));
       const seconds = Math.floor((distance % (60 * 1000)) / 1000);
       if (distance < 0) {
         clearInterval(interval.current);
-        const data=axios.get(`/submit/${test}`,{
+        const endstatus = "Time Up";
+        const data=axios.get(`/submit/${test}/${endstatus}`,{
           headers:{
             Authorization:`Token ${token}`
           }
         });
         window.alert("Time Up");
+        localStorage.removeItem('warningCount');
+        localStorage.removeItem('deadline');
         navigate(`/home/${data.name}/result`);
       } else {
         setTimerHours(hours);
@@ -93,14 +128,14 @@ function Compiler() {
       }
     }, 1000);
   };
-
   useEffect(() => {
     startTimer();
+    
     return () => {
       clearInterval(interval.current);
     };
   }, [countDownDate]);
-
+  console.log(status)
   useEffect(()=>{
     const fetchData=async()=>{
       try{
@@ -119,7 +154,6 @@ function Compiler() {
     }
     fetchData();
   },[]);
-
   const signoutHandler = () => {
     ctxDispatch({ type: 'DELETE_USERINFO' });
     localStorage.clear();
@@ -148,10 +182,9 @@ function Compiler() {
       window.removeEventListener('beforeunload', handleSaveCode);
     }
   },[tempcode]);
- 
   console.log(tempcode);
   const [warningCount, setWarningCount] = useWarningCount();
-  
+  const [proctCount, setProctCount] = useProctCount();
   const submitHandler = async (e) => {
     e.preventDefault();
     const {tempcode:code}=tempcode;
@@ -170,6 +203,36 @@ function Compiler() {
       console.log(err);
     }
   }
+  useEffect(() => {
+    const interval=setInterval(()=>{
+      const fetchData=async()=>{
+        try{
+          const result = await axios.get(`/take`);
+          setStatus(result.data.status);
+          if(result.data.status=='Cheating')
+          { 
+            setProctCount(proctCount+1);
+            window.alert("Please dont move your head from the screen");
+          }
+        }
+        catch(error){
+          console.log(error)
+        }
+      }
+      fetchData();
+      // const {status:statusflag}=status;
+      const {flag}=status;
+      
+    },3000)
+    return ()=>{
+      clearInterval(interval)
+    };
+  },[proctCount]);
+  
+
+  console.log(proctCount)
+  console.log(status.status)
+
   useEffect(() => {
     function handleVisibilityChange() {
       if (document.visibilityState === 'hidden') {
@@ -190,17 +253,20 @@ function Compiler() {
       setQuestion(resultquest.data);
     }; 
     fetchData();
-    //startTimer();
-  },[id],[warnings]);
-
-  console.log(question);
+  },[id]);
+  
   return (
     <div class="wrapper">
       <div class="section">
         <div class="topnav">
           <div className="logout-div">
             <a href="#home" class="active">Python Evaluator</a>
-            <button class="logout logout-header" onClick={signoutHandler}>Logout</button>
+              <button class="logout logout-header" onClick={signoutHandler}>Logout
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path d="M12 21c4.411 0 8-3.589 8-8 0-3.35-2.072-6.221-5-7.411v2.223A6 6 0 0 1 18 13c0 3.309-2.691 6-6 6s-6-2.691-6-6a5.999 5.999 0 0 1 3-5.188V5.589C6.072 6.779 4 9.65 4 13c0 4.411 3.589 8 8 8z" />
+                    <path d="M11 2h2v10h-2z" />
+                </svg>
+              </button>
           </div>
           <div id="myLinks">
             {question.map((q)=>{
@@ -222,7 +288,6 @@ function Compiler() {
       <div class="row">
         <div class="column quest1">
           {compile.map((q) => {
-            console.log(q);
             return (
               <CompilerComponent
                 qnum={q.id}
@@ -286,12 +351,10 @@ function Compiler() {
             </div>
             <div class="col">
               <div id="button">
-                <button className="btn btn-success">Save</button>
                 <button className="btn btn-success">Run</button>
                 <br />
                 <button class="btn btn-success" type="submit">Submit</button>
                 <br />
-                <pre id="ans"></pre>
               </div>
             </div>
           </form>

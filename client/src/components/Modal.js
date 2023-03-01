@@ -23,8 +23,8 @@ function Modal({ setOpenModal }) {
     if (end === "END") {
      
       new Promise((resolve) => {
-        
-        data=axios.get(`/submit/${test}`,{
+        const endstatus = "Success"
+        data=axios.get(`/submit/${test}/${endstatus}`,{
           headers:{
             Authorization:`Token ${token}`
           }
