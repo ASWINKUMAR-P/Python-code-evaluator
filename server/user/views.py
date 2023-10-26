@@ -21,7 +21,6 @@ import os
 from PIL import Image
 from io import BytesIO
 import cv2
-import mediapipe as mp
 import face_recognition
 import json
 from google_drive_downloader import GoogleDriveDownloader as gdd
